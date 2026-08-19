@@ -1,7 +1,7 @@
 name = "OpenSpinDynamics"
 uuid = "8d81ec37-2354-4fb2-99c0-03ca6f2bbd39"
-authors = ["Javad Vahedi <javahedi@gmail.com>"]
 version = "0.1.0"
+authors = ["Javad Vahedi <javahedi@gmail.com>"]
 
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
@@ -14,7 +14,6 @@ Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
-Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
@@ -32,7 +31,6 @@ Expokit = "0.2.0"
 JSON = "0.21.4"
 LinearAlgebra = "1.11.0"
 Logging = "1.11.0"
-Reexport = "1.2.2"
 SparseArrays = "1.11.0"
 Statistics = "1.11.1"
 StatsBase = "0.34.4"
