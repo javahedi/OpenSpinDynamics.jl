@@ -2,7 +2,7 @@
 module SpinModels
 
 using SparseArrays
-using OpenSpinDynamics
+using ..PauliOps: generate_operators
 
 export SpinModel, model, update_model!
 
