@@ -85,4 +85,70 @@ using Random
 
         @test get_matrix(coupling1) == get_matrix(coupling2)
     end
+
+
+
 end
+
+
+
+
+
+    @testset "Odd number of spins" begin
+        α = 2.0
+        L = 50
+        N = 5
+
+        rng1 = MersenneTwister(42)
+        rng2 = MersenneTwister(42)
+
+        coupling1 = LongRangeCouplingDisorder(
+            rng1,
+            α,
+            L,
+            N;
+            reordered=true,
+        )
+
+        coupling2 = LongRangeCouplingDisorder(
+            rng2,
+            α,
+            L,
+            N;
+            reordered=true,
+        )
+
+        J1 = get_matrix(coupling1)
+        J2 = get_matrix(coupling2)
+
+        @test size(J1) == (N, N)
+        @test issymmetric(J1)
+        @test all(diag(J1) .== 0.0)
+        @test J1 == J2
+    end
+
+
+
+    @testset "Coupling input validation" begin
+        @test_throws ArgumentError LongRangeCouplingDisorder(
+            MersenneTwister(1),
+            2.0,
+            4,
+            5,
+        )
+
+        @test_throws ArgumentError LongRangeCouplingDisorder(
+            MersenneTwister(1),
+            2.0,
+            0,
+            0,
+        )
+
+        @test_throws ArgumentError LongRangeCouplingDisorder(
+            MersenneTwister(1),
+            2.0,
+            10,
+            -1,
+        )
+    end
+
