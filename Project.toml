@@ -1,4 +1,4 @@
-name = "OpenQuantumSpinDynamics"
+name = "OpenSpinDynamics"
 uuid = "8d81ec37-2354-4fb2-99c0-03ca6f2bbd39"
 authors = ["Javad Vahedi <javahedi@gmail.com>"]
 version = "0.1.0"

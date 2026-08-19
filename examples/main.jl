@@ -1,5 +1,5 @@
 
-using OpenQuantumSpinDynamics
+using OpenSpinDynamics
 using Logging
 using BSON
 using UUIDs
@@ -13,7 +13,7 @@ if nprocs() == 1
 end
 
 @everywhere begin
-    using OpenQuantumSpinDynamics
+    using OpenSpinDynamics
 end
 
 
@@ -53,6 +53,6 @@ results = pmap(d -> disorder(d, hx, hz, Jxy, Jz, TIMEPOINTS, ψ0, Cop,
 summarize_results(results)
 
 
-# inside the main project folder <OpenQuantumSpinDynamics>
+# inside the main project folder <OpenSpinDynamics>
 # run :
 # julia --project=. -t 4 examples/main.jl

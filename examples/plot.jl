@@ -6,7 +6,7 @@ using Printf
 using LaTeXStrings
 using PlutoUI
 using Measures
-using OpenQuantumSpinDynamics
+using OpenSpinDynamics
 using Statistics  # For mean and std functions
 
 config_path = joinpath(@__DIR__, "configuration.json")
@@ -92,6 +92,6 @@ xlabel!( "Time")
 savefig("$(@__DIR__)/magnetization_$method.pdf")
 
 
-# inside the main project folder <OpenQuantumSpinDynamics>
+# inside the main project folder <OpenSpinDynamics>
 # run :
 # julia --project=. examples/plot.jl
