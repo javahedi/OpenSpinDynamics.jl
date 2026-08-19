@@ -1,14 +1,64 @@
+using LinearAlgebra
+
 @testset "Couplings" begin
-    α = 2.0
-    L = 100
-    N = 10
+    @testset "Long-range clean" begin
+        α = 2.0
+        N = 4
 
-    coupling_disorder = LongRangeCouplingDisorder(α, L, N)
-    @test size(get_matrix(coupling_disorder)) == (N, N)
+        coupling = LongRangeCouplingClean(α, N)
+        J = get_matrix(coupling)
 
-    coupling_clean = LongRangeCouplingClean(α, N)
-    J = get_matrix(coupling_clean)
+        @test size(J) == (N, N)
+        @test issymmetric(J)
+        @test all(diag(J) .== 0.0)
 
-    @test size(J) == (N, N)
-    @test isapprox(J, transpose(J); atol=1e-8)
+        @test J[1, 2] ≈ 1.0
+        @test J[1, 3] ≈ 1 / 2^α
+        @test J[1, 4] ≈ 1 / 3^α
+
+        @test get_N(coupling) == N
+    end
+
+    @testset "Nearest-neighbor" begin
+        δ = 0.2
+        N = 4
+
+        coupling = NearestNeighborCoupling(δ, N)
+        J = get_matrix(coupling)
+
+        @test size(J) == (N, N)
+        @test issymmetric(J)
+        @test all(diag(J) .== 0.0)
+
+        @test J[1, 2] ≈ 1.0 - δ
+        @test J[2, 3] ≈ 1.0 + δ
+        @test J[3, 4] ≈ 1.0 - δ
+
+        @test J[1, 3] == 0.0
+        @test J[1, 4] == 0.0
+
+        @test get_N(coupling) == N
+    end
+
+    @testset "Long-range disorder" begin
+        α = 2.0
+        L = 100
+        N = 10
+
+        coupling = LongRangeCouplingDisorder(
+            α,
+            L,
+            N;
+            reordered=false,
+        )
+
+        J = get_matrix(coupling)
+
+        @test size(J) == (N, N)
+        @test issymmetric(J)
+        @test all(diag(J) .== 0.0)
+        @test all(J .>= 0.0)
+
+        @test get_N(coupling) == N
+    end
 end
