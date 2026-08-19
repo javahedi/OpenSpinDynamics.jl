@@ -8,7 +8,7 @@ module KrylovArnoldiSolver
     include("Arnoldi.jl")
     
 
-    export KrylovArnoldiSystem, evolve_KrylovArnodli
+    export KrylovArnoldiSystem, evolve, evolve_KrylovArnodli
     
     struct KrylovArnoldiSystem
         hamiltonian::SparseMatrixCSC{Float64, Int64}         # Hamiltonian
@@ -64,18 +64,40 @@ module KrylovArnoldiSolver
     end
 
     
-    function evolve_KrylovArnodli(solver::KrylovArnoldiSystem, ψ0::SparseVector{Float64, Int64}, 
-                            time_points::Vector{Float64}, 
-                            observables::Vector{SparseMatrixCSC{Float64, Int}}, 
-                            method::Symbol=:krylov)
+    function evolve(
+        solver::KrylovArnoldiSystem,
+        ψ0::SparseVector{Float64, Int64},
+        time_points::Vector{Float64},
+        observables::Vector{SparseMatrixCSC{Float64, Int}};
+        method::Symbol=:krylov,
+    )
+        method in (:krylov, :arnoldi) ||
+            throw(ArgumentError("method must be :krylov or :arnoldi"))
 
-        @assert method in [:arnoldi, :krylov] "Method must be either :arnoldi or :krylov"
-
-        if method == :arnoldi
-            return _solver_Arnoldi(solver, ψ0, observables, time_points)
-        elseif method == :krylov
+        if method === :krylov
             return _solver_Krylov(solver, ψ0, observables, time_points)
+        else
+            return _solver_Arnoldi(solver, ψ0, observables, time_points)
         end
     end
+
+
+
+    function evolve_KrylovArnodli(
+        solver::KrylovArnoldiSystem,
+        ψ0::SparseVector{Float64, Int64},
+        time_points::Vector{Float64},
+        observables::Vector{SparseMatrixCSC{Float64, Int}},
+        method::Symbol=:krylov,
+    )
+        return evolve(
+            solver,
+            ψ0,
+            time_points,
+            observables;
+            method=method,
+        )
+    end
+
 
 end  # End of KrylovArnoldiSolver module

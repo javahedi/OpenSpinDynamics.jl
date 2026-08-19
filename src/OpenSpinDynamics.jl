@@ -33,6 +33,7 @@ using .LindbladSolver:
 include("KrylovArnoldiSolver.jl")
 using .KrylovArnoldiSolver:
     KrylovArnoldiSystem,
+    evolve,
     evolve_KrylovArnodli
 
 include("StochasticWavefunctionSolver.jl")
@@ -69,6 +70,7 @@ export
     StochasticWavefunctionSystem,
     evolve_Lindblad,
     evolve_KrylovArnodli,
+    evolve,
     evolve_swf,
     solver_function,
     disorder,
