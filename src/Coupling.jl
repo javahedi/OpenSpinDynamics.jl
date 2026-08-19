@@ -1,6 +1,6 @@
 module Coupling
 
-    using StatsBase
+    using Random
 
     export AbstractCoupling,
         LongRangeCouplingDisorder,
@@ -32,29 +32,79 @@ module Coupling
         N::Int                   # Number of spins
     end
 
-    # Constructor for long-range random coupling
-    function LongRangeCouplingDisorder(α::Float64, L::Int, N::Int; reordered::Bool=true)
+    # # Constructor for long-range random coupling
+    # function LongRangeCouplingDisorder(α::Float64, L::Int, N::Int; reordered::Bool=true)
         
 
-        r_index = sample(1:L, N, replace=false) |> sort
+    #     r_index = sample(1:L, N, replace=false) |> sort
 
-        # Reorder indices if requested
+    #     # Reorder indices if requested
+    #     if reordered
+    #         i_index, r_index = reorder_indices(r_index)
+    #     end
+        
+    #     # Initialize the coupling matrix Jmn
+    #     Jmn = zeros(Float64, N, N)
+    #     for i in 1:N-1
+    #         for j in i+1:N
+    #             dij = abs(r_index[i] - r_index[j])
+    #             Jmn[i, j] = 1.0 / dij^α             
+    #         end
+    #     end
+
+    #     Jmn .+= Jmn'
+    #     return LongRangeCouplingDisorder(Jmn, α, L, N, reordered)
+    # end
+
+
+    function LongRangeCouplingDisorder(
+        rng::AbstractRNG,
+        α::Float64,
+        L::Int,
+        N::Int;
+        reordered::Bool=true,
+    )
+        N <= L || throw(ArgumentError("N must not exceed L."))
+
+        r_index = sort(randperm(rng, L)[1:N])
+
         if reordered
-            i_index, r_index = reorder_indices(r_index)
+            _, r_index = reorder_indices(r_index)
         end
-        
-        # Initialize the coupling matrix Jmn
+
         Jmn = zeros(Float64, N, N)
+
         for i in 1:N-1
             for j in i+1:N
                 dij = abs(r_index[i] - r_index[j])
-                Jmn[i, j] = 1.0 / dij^α             
+                Jmn[i, j] = 1.0 / dij^α
             end
         end
 
         Jmn .+= Jmn'
+
         return LongRangeCouplingDisorder(Jmn, α, L, N, reordered)
     end
+
+    function LongRangeCouplingDisorder(
+        α::Float64,
+        L::Int,
+        N::Int;
+        reordered::Bool=true,
+    )
+        return LongRangeCouplingDisorder(
+            Random.default_rng(),
+            α,
+            L,
+            N;
+            reordered=reordered,
+        )
+    end
+
+
+
+
+
 
     # Constructor for long-range coupling
     function LongRangeCouplingClean(α::Float64, N::Int)

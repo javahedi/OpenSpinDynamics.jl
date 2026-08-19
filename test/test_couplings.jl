@@ -1,4 +1,5 @@
 using LinearAlgebra
+using Random
 
 @testset "Couplings" begin
     @testset "Long-range clean" begin
@@ -60,5 +61,28 @@ using LinearAlgebra
         @test all(J .>= 0.0)
 
         @test get_N(coupling) == N
+
+
+
+        rng1 = MersenneTwister(1234)
+        rng2 = MersenneTwister(1234)
+
+        coupling1 = LongRangeCouplingDisorder(
+            rng1,
+            α,
+            L,
+            N;
+            reordered=false,
+        )
+
+        coupling2 = LongRangeCouplingDisorder(
+            rng2,
+            α,
+            L,
+            N;
+            reordered=false,
+        )
+
+        @test get_matrix(coupling1) == get_matrix(coupling2)
     end
 end
