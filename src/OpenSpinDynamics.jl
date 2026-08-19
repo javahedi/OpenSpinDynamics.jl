@@ -46,8 +46,7 @@ using .Solvers: solver_function
 include("Disorder.jl")
 using .Disorder: disorder
 
-include("setup.jl")
-include("utils.jl")
+
 
 export
     generate_operators,
@@ -71,11 +70,6 @@ export
     evolve_swf,
     solver_function,
     disorder,
-    setup_parameters,
-    initialize_system,
-    setup_logging,
-    summarize_results
-
-
+    initialize_system
 
 end

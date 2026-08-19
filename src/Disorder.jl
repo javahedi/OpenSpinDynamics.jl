@@ -23,9 +23,14 @@ module Disorder
 
             # Solve for expectation values
             results = solver_function(
-                            spin_model, Cop, ψ0, observables, TIMEPOINTS,
-                            Symbol(params["solver_type"]), Symbol(params["method"]),
-                            Int(params["n_sample"]), Bool(params["use_gpu"])
+                            spin_model,
+                            Cop,
+                            ψ0,
+                            observables,
+                            TIMEPOINTS,
+                            Symbol(params["solver_type"]),
+                            Symbol(params["method"]),
+                            Int(params["n_sample"]),
                         )
 
             # Save results with a unique ID
