@@ -14,7 +14,12 @@ module Disorder
             coupling = LongRangeCouplingDisorder(params["α"], params["lattice_length"], params["lattice_size"]; reordered=true)
 
             # Initialize the model
-            spin_model = model(params["lattice_size"], Jxy, Jz, hx=hx, hz=hz, Jmn=coupling.matrix, pbc=false)
+            spin_model = model(params["lattice_size"], 
+                                Jxy, 
+                                Jz, 
+                                hx=hx, 
+                                hz=hz, 
+                                Jmn=coupling.matrix)
 
             # Solve for expectation values
             results = solver_function(
