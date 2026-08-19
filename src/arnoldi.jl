@@ -34,9 +34,22 @@ function arnoldi(H::SparseMatrixCSC{Float64, Int64},
 
         # Check for convergence
         if abs(h[n + 1, n]) < tol
-            @warn "Convergence reached with a very small norm of v: $(abs(h[n + 1, n]))"
-            return expiHt__, Dict("n_iterations" => n, "residue" => residue)
+            Hn = h[1:n, 1:n]
+
+            expiHt =
+                Q[:, 1:n] *
+                exp(Hn)[:, 1] *
+                normb
+
+            return expiHt, Dict(
+                "n_iterations" => n,
+                "residue" => 0.0,
+            )
         end
+        normb = norm(ψ)
+
+        normb > 0 ||
+            throw(ArgumentError("ψ must have nonzero norm"))
 
         # Update basis vector
         q = v / h[n + 1, n]
