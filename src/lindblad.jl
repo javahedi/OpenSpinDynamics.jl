@@ -2,7 +2,8 @@ module LindbladSolver
 
     using SparseArrays
     using LinearAlgebra
-    using DifferentialEquations
+    using OrdinaryDiffEqTsit5: Tsit5
+    using SciMLBase: ODEProblem, solve
     using Expokit
     import ..evolve
 
@@ -42,10 +43,13 @@ module LindbladSolver
         dρ .= superop * state
     end
    
-    function _solver_ode(solver::LindbladSystem, ρ0::SparseMatrixCSC{ComplexF64, Int}, 
-                        time_points::Vector{Float64}, 
-                        observables::Vector{SparseMatrixCSC{Float64, Int}},
-                        solver_algorithm=AutoVern8(Vern8()))
+   function _solver_ode(
+                solver::LindbladSystem,
+                ρ0::SparseMatrixCSC{ComplexF64, Int},
+                time_points::Vector{Float64},
+                observables::Vector{SparseMatrixCSC{Float64, Int}},
+                solver_algorithm=Tsit5(),
+            )
 
         # Validate dimensions
         @assert size(ρ0[:], 1) == size(solver.superop, 1) "Initial state must have compatible dimensions with the superoperator."
