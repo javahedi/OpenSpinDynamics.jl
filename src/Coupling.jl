@@ -1,22 +1,14 @@
 module Coupling
 
-    """
-    Example usage: 
-    coupling = LongRangeCouplingDisorder(α, L, N)
-    println(get_matrix(coupling))
-    """
-   
-    using Combinatorics
-    using Distributions
     using StatsBase
-    using Base.Iterators
 
+    export AbstractCoupling,
+        LongRangeCouplingDisorder,
+        LongRangeCouplingClean,
+        NearestNeighborCoupling,
+        get_matrix,
+        get_N
 
-    export AbstractCoupling, LongRangeCouplingDisorder, 
-           LongRangeCouplingClean, NearestNeighborCoupling,
-           get_matrix, get_N
-
-    # Define the abstract type
     abstract type AbstractCoupling end
 
     # Define concrete types
