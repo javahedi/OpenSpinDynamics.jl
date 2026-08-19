@@ -1,0 +1,15 @@
+/Manifest*.toml
+
+# Editor
+.vscode/
+
+# Documentation build
+docs/build/
+docs/Manifest.toml
+
+# Coverage
+*.cov
+*.mem
+
+# Local files
+my_note.txt
