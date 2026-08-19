@@ -1,40 +1,67 @@
-#__precompile__(false)
 module OpenSpinDynamics
 
-    using Reexport
+function evolve end
 
-    include("PauliOps.jl")
-    @reexport using .PauliOps
+include("operators.jl")
+using .PauliOps: generate_operators
 
-    include("Coupling.jl")
-    @reexport using .Coupling
+include("couplings.jl")
+using .Coupling:
+    AbstractCoupling,
+    LongRangeCouplingDisorder,
+    LongRangeCouplingClean,
+    NearestNeighborCoupling,
+    get_matrix,
+    get_N
 
-    include("QuantumState.jl")
-    @reexport using .QuantumState
+include("states.jl")
+using .QuantumState:
+    AbstractInitialState,
+    NeelState,
+    PolarizedState,
+    construct_state
 
-    include("SpinModels.jl")
-    @reexport using .SpinModels
+include("models.jl")
+using .SpinModels:
+    SpinModel,
+    model,
+    update_model!
 
-    include("LindbladSolver.jl")
-    @reexport using .LindbladSolver
+include("lindblad.jl")
+using .LindbladSolver:
+    LindbladSystem
 
-    include("KrylovArnoldiSolver.jl")
-    @reexport using .KrylovArnoldiSolver
+include("krylov.jl")
+using .KrylovArnoldiSolver:
+    KrylovArnoldiSystem
 
-    include("StochasticWavefunctionSolver.jl")
-    @reexport using .StochasticWavefunctionSolver
+include("trajectories.jl")
+using .StochasticWavefunctionSolver:
+    StochasticWavefunctionSystem,
+    evolve_swf
 
-    # Add new modules
-    include("Solvers.jl")
-    @reexport using .Solvers
 
-    include("Disorder.jl")
-    @reexport using .Disorder
 
-    include("setup.jl")
-    export setup_parameters, initialize_system
-
-    include("utils.jl")
-    export setup_logging, summarize_results
+export
+    generate_operators,
+    AbstractCoupling,
+    LongRangeCouplingDisorder,
+    LongRangeCouplingClean,
+    NearestNeighborCoupling,
+    get_matrix,
+    get_N,
+    AbstractInitialState,
+    NeelState,
+    PolarizedState,
+    construct_state,
+    SpinModel,
+    model,
+    update_model!,
+    LindbladSystem,
+    KrylovArnoldiSystem,
+    StochasticWavefunctionSystem,
+    evolve,
+    evolve_swf,
+    initialize_system
 
 end

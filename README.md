@@ -1,6 +1,6 @@
 # OpenSpinDynamics.jl
 
-[![CI Pipeline](https://github.com/javahedi/OpenQuantumSpinDynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/javahedi/OpenQuantumSpinDynamics/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/javahedi/OpenSpinDynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/javahedi/OpenSpinDynamics/actions/workflows/ci.yml)
 
 ![SpinDynamics Logo](assets/logo.png)
 

@@ -16,6 +16,7 @@ end
 
 # Function to generate Pauli operators for an N-spin system
 function generate_operators(N::Int)
+    N > 0 || throw(ArgumentError("N must be positive."))
     # Define the single-spin Pauli matrices
     σx = sparse([0. 1.; 1. 0.])
     σz = sparse([1. 0.; 0. -1.])
