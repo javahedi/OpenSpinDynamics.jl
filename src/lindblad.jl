@@ -15,28 +15,71 @@ module LindbladSolver
         lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}}
     end
 
-# Constructor for Lindblad system
-    function LindbladSystem(hamiltonian::SparseMatrixCSC{Float64, Int64}, 
-                            lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}})
-        hbar = 1.0
-        
-        # Validate dimensions: ensure all Lindblad operators have the same dimension as the Hamiltonian
+    # Constructor for Lindblad system
+    function LindbladSystem(
+        hamiltonian::SparseMatrixCSC{Float64, Int64},
+        lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}},
+    )
         dim = size(hamiltonian, 1)
-        @assert all(size(op) == (dim, dim) for op in lindblad_ops) "Lindblad operators must have the same dimensions as the Hamiltonian."
-        
-        # Construct the Lindblad superoperator
-        superH = -1im / hbar * (kron(I(dim), hamiltonian) - kron(transpose(hamiltonian), I(dim)))
-        
-        # The Lindblad superoperator (superL)
-        superL = sum([
-            kron(conj(op), op) - 0.5 * (kron(I(dim), op' * op) + kron(transpose(op) * conj(op), I(dim))) 
-            for op in lindblad_ops
-        ])
-        
-        # Total superoperator
+
+        size(hamiltonian, 2) == dim ||
+            throw(ArgumentError("Hamiltonian must be square"))
+
+        all(size(op) == (dim, dim) for op in lindblad_ops) ||
+            throw(ArgumentError(
+                "Lindblad operators must have the same dimensions as the Hamiltonian",
+            ))
+
+        identity = sparse(I, dim, dim)
+
+        superH = -1im * (
+            kron(identity, hamiltonian) -
+            kron(transpose(hamiltonian), identity)
+        )
+
+        superL = spzeros(ComplexF64, dim^2, dim^2)
+
+        for op in lindblad_ops
+            opdag_op = op' * op
+
+            superL += kron(conj(op), op)
+
+            superL -= 0.5 * kron(identity, opdag_op)
+
+            superL -= 0.5 * kron(
+                transpose(op) * conj(op),
+                identity,
+            )
+        end
+
         superop = superH + superL
-        
-        return LindbladSystem(superop, hamiltonian, lindblad_ops)
+
+        return LindbladSystem(
+            superop,
+            hamiltonian,
+            lindblad_ops,
+        )
+    end
+
+
+    function _validate_dimensions(
+        solver::LindbladSystem,
+        ρ0,
+        observables,
+    )
+        dim = size(solver.hamiltonian, 1)
+
+        size(ρ0) == (dim, dim) ||
+            throw(DimensionMismatch(
+                "Initial density matrix must have size ($dim, $dim)",
+            ))
+
+        all(size(obs) == (dim, dim) for obs in observables) ||
+            throw(DimensionMismatch(
+                "Observables must have the same dimensions as the Hamiltonian",
+            ))
+
+        return nothing
     end
 
     function _rho_dot!(dρ, state, superop, time)
@@ -52,9 +95,9 @@ module LindbladSolver
             )
 
         # Validate dimensions
-        @assert size(ρ0[:], 1) == size(solver.superop, 1) "Initial state must have compatible dimensions with the superoperator."
-        @assert all(size(obs) == size(ρ0) for obs in observables) "Observables must have the same dimensions as the initial state."
-     
+        #@assert size(ρ0[:], 1) == size(solver.superop, 1) "Initial state must have compatible dimensions with the superoperator."
+        #@assert all(size(obs) == size(ρ0) for obs in observables) "Observables must have the same dimensions as the initial state."
+        _validate_dimensions(solver, ρ0, observables)
         
         time_span = (time_points[1],time_points[end])
 
@@ -90,8 +133,9 @@ module LindbladSolver
         time_points::Vector{Float64},
         observables::Vector{SparseMatrixCSC{Float64, Int}},
     )
-        @assert size(ρ0[:], 1) == size(solver.superop, 1)
-        @assert all(size(obs) == size(ρ0) for obs in observables)
+        #@assert size(ρ0[:], 1) == size(solver.superop, 1)
+        #@assert all(size(obs) == size(ρ0) for obs in observables)
+        _validate_dimensions(solver, ρ0, observables)
 
         shifted_times = time_points .- time_points[1]
 

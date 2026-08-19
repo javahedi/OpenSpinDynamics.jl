@@ -159,7 +159,7 @@ using LinearAlgebra
         H = spzeros(Float64, 2, 2)
         bad_L = spzeros(Float64, 3, 3)
 
-        @test_throws AssertionError LindbladSystem(H, [bad_L])
+        @test_throws ArgumentError LindbladSystem(H, [bad_L])
     end
 
 
