@@ -40,12 +40,6 @@ using .StochasticWavefunctionSolver:
     StochasticWavefunctionSystem,
     evolve_swf
 
-include("Solvers.jl")
-using .Solvers: solver_function
-
-include("Disorder.jl")
-using .Disorder: disorder
-
 
 
 export
@@ -68,8 +62,6 @@ export
     StochasticWavefunctionSystem,
     evolve,
     evolve_swf,
-    solver_function,
-    disorder,
     initialize_system
 
 end
