@@ -1,5 +1,5 @@
 module Solvers
-    using OpenQuantumSpinDynamics
+    using OpenSpinDynamics
     using SparseArrays
 
     export solver_function

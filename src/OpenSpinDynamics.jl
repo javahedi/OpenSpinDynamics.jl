@@ -1,5 +1,5 @@
 #__precompile__(false)
-module OpenQuantumSpinDynamics
+module OpenSpinDynamics
 
     using Reexport
 

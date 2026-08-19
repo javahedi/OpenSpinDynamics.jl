@@ -1,5 +1,5 @@
 # src/setup.jl
-using OpenQuantumSpinDynamics
+using OpenSpinDynamics
 using JSON       
 using Logging   
 

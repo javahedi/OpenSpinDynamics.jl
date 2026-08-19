@@ -1,5 +1,5 @@
 module Disorder
-    using OpenQuantumSpinDynamics
+    using OpenSpinDynamics
     using UUIDs
     using BSON
     using Logging

@@ -1,5 +1,5 @@
 using Test
-using OpenQuantumSpinDynamics
+using OpenSpinDynamics
 
 
 # PauliOps Tests

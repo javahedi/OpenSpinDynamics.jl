@@ -2,7 +2,7 @@
 module SpinModels
 
 using SparseArrays
-using OpenQuantumSpinDynamics
+using OpenSpinDynamics
 
 export SpinModel, model, update_model!
 
