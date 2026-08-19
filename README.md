@@ -1,10 +1,10 @@
-# OpenQuantumSpinDynamics
+# OpenSpinDynamics.jl
 
 [![CI Pipeline](https://github.com/javahedi/OpenQuantumSpinDynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/javahedi/OpenQuantumSpinDynamics/actions/workflows/ci.yml)
 
 ![SpinDynamics Logo](assets/logo.png)
 
-OpenQuantumSpinDynamics is a Julia-based library designed for simulating the dynamics of open quantum spin systems. The library provides robust tools for solving Lindblad master equations, stochastic wavefunctions, and analyzing spin models with a variety of solvers. 
+OpenSpinDynamics.jl is a Julia-based library designed for simulating the dynamics of open quantum spin systems. The library provides robust tools for solving Lindblad master equations, stochastic wavefunctions, and analyzing spin models with a variety of solvers. 
 
 This project leverages the power of Julia's ecosystem for high-performance numerical computing and is optimized for parallel execution.
 
@@ -30,7 +30,7 @@ This project leverages the power of Julia's ecosystem for high-performance numer
 ## Repository Structure
 
 ```
-OpenQuantumSpinDynamics
+OpenSpinDynamics
     ├── Manifest.toml
     ├── Project.toml
     ├── README.md
@@ -44,7 +44,7 @@ OpenQuantumSpinDynamics
     │   ├── Disorder.jl
     │   ├── KrylovArnoldiSolver.jl
     │   ├── LindbladSolver.jl
-    │   ├── OpenQuantumSpinDynamics.jl
+    │   ├── OpenSpinDynamics.jl
     │   ├── PauliOps.jl
     │   ├── QuantumState.jl
     │   ├── Solvers.jl
@@ -67,8 +67,8 @@ Ensure that you have Julia installed on your system. The recommended version is 
 
 Clone the repository:
 ```bash
-git clone https://github.com/javahedi/OpenQuantumSpinDynamics.git
-cd OpenQuantumSpinDynamics
+git clone https://github.com/javahedi/OpenSpinDynamics.git
+cd OpenSpinDynamics
 ```
 
 Activate the project environment in Julia:
