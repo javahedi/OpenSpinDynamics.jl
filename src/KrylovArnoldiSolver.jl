@@ -6,9 +6,10 @@ module KrylovArnoldiSolver
     using SparseArrays
     using Expokit
     include("Arnoldi.jl")
+    import ..evolve
     
 
-    export KrylovArnoldiSystem, evolve, evolve_KrylovArnodli
+    export KrylovArnoldiSystem
     
     struct KrylovArnoldiSystem
         hamiltonian::SparseMatrixCSC{Float64, Int64}         # Hamiltonian

@@ -1,5 +1,7 @@
 module OpenSpinDynamics
 
+function evolve end
+
 include("PauliOps.jl")
 using .PauliOps: generate_operators
 
@@ -27,14 +29,11 @@ using .SpinModels:
 
 include("LindbladSolver.jl")
 using .LindbladSolver:
-    LindbladSystem,
-    evolve_Lindblad
+    LindbladSystem
 
 include("KrylovArnoldiSolver.jl")
 using .KrylovArnoldiSolver:
-    KrylovArnoldiSystem,
-    evolve,
-    evolve_KrylovArnodli
+    KrylovArnoldiSystem
 
 include("StochasticWavefunctionSolver.jl")
 using .StochasticWavefunctionSolver:
@@ -68,8 +67,6 @@ export
     LindbladSystem,
     KrylovArnoldiSystem,
     StochasticWavefunctionSystem,
-    evolve_Lindblad,
-    evolve_KrylovArnodli,
     evolve,
     evolve_swf,
     solver_function,
@@ -78,5 +75,7 @@ export
     initialize_system,
     setup_logging,
     summarize_results
+
+
 
 end

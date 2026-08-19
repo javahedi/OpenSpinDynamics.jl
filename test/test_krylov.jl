@@ -25,15 +25,7 @@ using SparseArrays
         @test result[:, 1] ≈ ones(length(times))
 
 
-        old_result = evolve_KrylovArnodli(
-            system,
-            ψ0,
-            times,
-            [Z],
-            :krylov,
-        )
-
-        @test old_result ≈ result
+       
     end
 
     @testset "Invalid method" begin
