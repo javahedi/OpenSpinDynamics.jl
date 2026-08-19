@@ -28,8 +28,11 @@ module QuantumState
 
         # Transform to x-basis if needed
         if state.direction == "x"
-            up = sqrt(0.5) .* (up + dn)
-            dn = sqrt(0.5) .* (up - dn)
+            up_z = up
+            dn_z = dn
+
+            up = sqrt(0.5) .* (up_z + dn_z)
+            dn = sqrt(0.5) .* (up_z - dn_z)
         end
 
         # Construct Néel state
