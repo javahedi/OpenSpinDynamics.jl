@@ -5,7 +5,7 @@ module KrylovArnoldiSolver
     using LinearAlgebra
     using SparseArrays
     using Expokit
-    include("Arnoldi.jl")
+    include("arnoldi.jl")
     import ..evolve
     
 
