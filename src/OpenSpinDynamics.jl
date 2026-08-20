@@ -3,28 +3,24 @@ module OpenSpinDynamics
 function evolve end
 
 include("operators.jl")
-using .PauliOps: generate_operators
+using .Operators:
+    SpinOperators,
+    spin_operators
 
 include("couplings.jl")
 using .Coupling:
-    AbstractCoupling,
     LongRangeCouplingDisorder,
     LongRangeCouplingClean,
-    NearestNeighborCoupling,
-    get_matrix,
-    get_N
+    NearestNeighborCoupling
 
 include("states.jl")
 using .QuantumState:
-    AbstractInitialState,
-    NeelState,
-    PolarizedState,
-    construct_state
+    neel_state,
+    polarized_state
 
 include("models.jl")
 using .SpinModels:
     SpinModel,
-    model,
     update_model!
 
 include("lindblad.jl")
@@ -32,36 +28,28 @@ using .LindbladSolver:
     LindbladSystem
 
 include("krylov.jl")
-using .KrylovArnoldiSolver:
-    KrylovArnoldiSystem
 
 include("trajectories.jl")
-using .StochasticWavefunctionSolver:
-    StochasticWavefunctionSystem,
-    evolve_swf
+using .TrajectorySolver:
+    TrajectorySystem
+
+include("evolution.jl")
+    
 
 
 
 export
-    generate_operators,
-    AbstractCoupling,
+    SpinOperators,
+    spin_operators,
     LongRangeCouplingDisorder,
     LongRangeCouplingClean,
     NearestNeighborCoupling,
-    get_matrix,
-    get_N,
-    AbstractInitialState,
-    NeelState,
-    PolarizedState,
-    construct_state,
+    neel_state,
+    polarized_state,
     SpinModel,
-    model,
     update_model!,
     LindbladSystem,
-    KrylovArnoldiSystem,
-    StochasticWavefunctionSystem,
-    evolve,
-    evolve_swf,
-    initialize_system
+    TrajectorySystem,
+    evolve
 
 end

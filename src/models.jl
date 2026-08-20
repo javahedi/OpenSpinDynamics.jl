@@ -2,9 +2,9 @@
 module SpinModels
 
 using SparseArrays
-using ..PauliOps: generate_operators
-
-export SpinModel, model, update_model!
+using ..Operators: spin_operators
+using ..Coupling: AbstractCoupling
+export SpinModel, update_model!
 
 mutable struct SpinModel
     N::Int
@@ -16,56 +16,109 @@ mutable struct SpinModel
     Jmn::AbstractMatrix{Float64}
 end
 
+
 """
-    model(N::Int, Jxy::Float64, Jz::Float64; kwargs...)
+    SpinModel(N; Jxy=1.0, Jz=1.0, hx=zeros(N), hz=zeros(N), Jmn=zeros(N, N))
 
-Constructs a `SpinModel` object with the given parameters.
+Construct a quantum spin model.
 
-Arguments:
-  - `N`: Number of spins.
-  - `Jxy`: XY coupling constant.
-  - `Jz`: Z coupling constant.
+# Arguments
+- `N`: Number of spins.
 
-Keyword arguments:
-  - `hx`: External magnetic field in the x-direction (default: `zeros(N)`).
-  - `hz`: External magnetic field in the z-direction (default: `zeros(N)`).
-  - `Jmn`: Coupling matrix (default: `zeros(N, N)`).
+# Keywords
+- `Jxy`: XY coupling strength.
+- `Jz`: Ising coupling strength.
+- `hx`: Local x-fields.
+- `hz`: Local z-fields.
+- `Jmn`: Coupling matrix.
 
-Returns:
-  A `SpinModel` instance.
+# Returns
+A `SpinModel` containing the Hamiltonian and model parameters.
 """
-function model(N::Int, Jxy::Float64, Jz::Float64;
-               hx::Vector{Float64}=zeros(N),
-               hz::Vector{Float64}=zeros(N),
-               Jmn::Matrix{Float64}=zeros(Float64, N, N))
+function SpinModel(
+    N::Int;
+    Jxy::Real=1.0,
+    Jz::Real=1.0,
+    hx::AbstractVector{<:Real}=zeros(N),
+    hz::AbstractVector{<:Real}=zeros(N),
+    Jmn::Union{Nothing, AbstractMatrix{<:Real}}=nothing,
+    coupling::Union{Nothing, AbstractCoupling}=nothing,
+)
+    N > 0 ||
+        throw(ArgumentError("N must be positive"))
 
-    # Validate input dimensions
-    if length(hx) != N || length(hz) != N || size(Jmn) != (N, N)
-        error("Dimension mismatch: Ensure hx, hz are of size $N and Jmn is $N x $N.")
+    if Jmn !== nothing && coupling !== nothing
+        throw(ArgumentError(
+            "Specify either Jmn or coupling, not both",
+        ))
     end
 
-    # Initialize the Hamiltonian
+    length(hx) == N ||
+        throw(DimensionMismatch("hx must have length $N"))
+
+    length(hz) == N ||
+        throw(DimensionMismatch("hz must have length $N"))
+
+    J_matrix = if coupling !== nothing
+        coupling.N == N ||
+            throw(DimensionMismatch(
+                "coupling.N must match N",
+            ))
+
+        copy(coupling.matrix)
+
+    elseif Jmn !== nothing
+        size(Jmn) == (N, N) ||
+            throw(DimensionMismatch(
+                "Jmn must have size ($N, $N)",
+            ))
+
+        Matrix{Float64}(Jmn)
+
+    else
+        zeros(Float64, N, N)
+    end
+
+    hx_vec = Float64.(hx)
+    hz_vec = Float64.(hz)
+
     hamiltonian = spzeros(Float64, 2^N, 2^N)
-    paulis = generate_operators(N)
+    ops = spin_operators(N)
 
-
-
-    # Add local fields
-    @views for i in 1:N
-        hamiltonian += hx[i] * paulis.Xop[i]
-        hamiltonian += hz[i] * paulis.Zop[i]
+    for i in 1:N
+        hamiltonian += hx_vec[i] * ops.x[i]
+        hamiltonian += hz_vec[i] * ops.z[i]
     end
 
-    # Add interaction terms
-    @views for i in 1:N
+    for i in 1:N-1
         for j in i+1:N
-            hamiltonian += 2.0 * Jxy * (paulis.Pop[i] * paulis.Nop[j] + paulis.Nop[i] * paulis.Pop[j]) * Jmn[i, j]
-            hamiltonian += Jz * (paulis.Zop[i] * paulis.Zop[j]) * Jmn[i, j]
+            hamiltonian +=
+                2.0 * Float64(Jxy) *
+                (
+                    ops.plus[i] * ops.minus[j] +
+                    ops.minus[i] * ops.plus[j]
+                ) *
+                J_matrix[i, j]
+
+            hamiltonian +=
+                Float64(Jz) *
+                (ops.z[i] * ops.z[j]) *
+                J_matrix[i, j]
         end
     end
 
-    return SpinModel(N, hamiltonian, Jxy, Jz, hx, hz, Jmn)
+    return SpinModel(
+        N,
+        hamiltonian,
+        Float64(Jxy),
+        Float64(Jz),
+        hx_vec,
+        hz_vec,
+        J_matrix,
+    )
 end
+
+
 
 """
     update_model!(model::SpinModel, Jxy::Float64, Jz::Float64; kwargs...)
@@ -85,38 +138,86 @@ Keyword arguments:
 Returns:
   Nothing. Modifies the `SpinModel` in place.
 """
-function update_model!(model::SpinModel, Jxy::Float64, Jz::Float64;
-                        hx::Vector{Float64}=zeros(model.N), 
-                        hz::Vector{Float64}=zeros(model.N),
-                        Jmn::Matrix{Float64}=zeros(Float64, model.N, model.N))
+function update_model!(
+    model::SpinModel;
+    Jxy::Real=model.Jxy,
+    Jz::Real=model.Jz,
+    hx::AbstractVector{<:Real}=model.hx,
+    hz::AbstractVector{<:Real}=model.hz,
+    Jmn::Union{Nothing, AbstractMatrix{<:Real}}=nothing,
+    coupling::Union{Nothing, AbstractCoupling}=nothing,
+)
+    N = model.N
 
-    # Validate input dimensions
-    if length(hx) != model.N || length(hz) != model.N || size(Jmn) != (model.N, model.N)
-        error("Dimension mismatch: Ensure hx, hz are of size $(model.N) and Jmn is $(model.N) x $(model.N).")
+    if Jmn !== nothing && coupling !== nothing
+        throw(ArgumentError(
+            "Specify either Jmn or coupling, not both",
+        ))
     end
 
-    # Update Hamiltonian
-    hamiltonian = spzeros(Float64, 2^model.N, 2^model.N)
-    paulis = generate_operators(model.N)
+    length(hx) == N ||
+        throw(DimensionMismatch("hx must have length $N"))
 
-    @views for i in 1:model.N
-        hamiltonian += hx[i] * paulis.Xop[i]
-        hamiltonian += hz[i] * paulis.Zop[i]
+    length(hz) == N ||
+        throw(DimensionMismatch("hz must have length $N"))
+
+    J_matrix = if coupling !== nothing
+        coupling.N == N ||
+            throw(DimensionMismatch(
+                "coupling.N must match model.N",
+            ))
+
+        copy(coupling.matrix)
+
+    elseif Jmn !== nothing
+        size(Jmn) == (N, N) ||
+            throw(DimensionMismatch(
+                "Jmn must have size ($N, $N)",
+            ))
+
+        Matrix{Float64}(Jmn)
+
+    else
+        copy(model.Jmn)
     end
 
-    @views for i in 1:model.N
-        for j in i+1:model.N
-            hamiltonian += 2.0 * Jxy * (paulis.Pop[i] * paulis.Nop[j] + paulis.Nop[i] * paulis.Pop[j]) * Jmn[i, j]
-            hamiltonian +=        Jz * (paulis.Zop[i] * paulis.Zop[j]) * Jmn[i, j]
+    hx_vec = Float64.(hx)
+    hz_vec = Float64.(hz)
+
+
+    hamiltonian = spzeros(Float64, 2^N, 2^N)
+    ops = spin_operators(N)
+
+    for i in 1:N
+        hamiltonian += hx_vec[i] * ops.x[i]
+        hamiltonian += hz_vec[i] * ops.z[i]
+    end
+
+    for i in 1:N-1
+        for j in i+1:N
+            hamiltonian +=
+                2.0 * Float64(Jxy) *
+                (
+                    ops.plus[i] * ops.minus[j] +
+                    ops.minus[i] * ops.plus[j]
+                ) *
+                J_matrix[i, j]
+
+            hamiltonian +=
+                Float64(Jz) *
+                (ops.z[i] * ops.z[j]) *
+                J_matrix[i, j]
         end
     end
 
     model.hamiltonian = hamiltonian
-    model.Jxy = Jxy
-    model.Jz = Jz
-    model.hx = copy(hx)
-    model.hz = copy(hz)
-    model.Jmn = copy(Jmn)
+    model.Jxy = Float64(Jxy)
+    model.Jz = Float64(Jz)
+    model.hx = hx_vec
+    model.hz = hz_vec
+    model.Jmn = J_matrix
+
+    return model
 end
 
 end  # End of SpinModel module

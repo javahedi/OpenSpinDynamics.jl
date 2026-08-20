@@ -280,4 +280,24 @@ using LinearAlgebra
 
         @test trace_values[:, 1] ≈ ones(length(times)) atol=1e-12
     end
+
+
+    @testset "Construct from SpinModel" begin
+        model = SpinModel(
+            1;
+            Jxy=0.0,
+            Jz=0.0,
+        )
+
+        L = spzeros(Float64, 2, 2)
+
+        system = LindbladSystem(model, [L])
+
+        @test system.hamiltonian == model.hamiltonian
+        @test length(system.lindblad_ops) == 1
+    end
+
+
+
+    
 end

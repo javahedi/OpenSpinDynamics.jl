@@ -6,6 +6,7 @@ module LindbladSolver
     using SciMLBase: ODEProblem, solve
     using Expokit
     import ..evolve
+    using ..SpinModels: SpinModel
 
     export LindbladSystem
 
@@ -13,6 +14,17 @@ module LindbladSolver
         superop::SparseMatrixCSC{ComplexF64, Int64}
         hamiltonian::SparseMatrixCSC{Float64, Int64}
         lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}}
+    end
+
+
+    function LindbladSystem(
+        model::SpinModel,
+        lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}},
+    )
+        return LindbladSystem(
+            model.hamiltonian,
+            lindblad_ops,
+        )
     end
 
     # Constructor for Lindblad system

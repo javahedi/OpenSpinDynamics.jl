@@ -7,9 +7,10 @@ module KrylovArnoldiSolver
     using Expokit
     include("arnoldi.jl")
     import ..evolve
+    using ..SpinModels: SpinModel
     
 
-    export KrylovArnoldiSystem
+    export nothing
     
     struct KrylovArnoldiSystem
         hamiltonian::SparseMatrixCSC{Float64, Int64}         # Hamiltonian
@@ -84,21 +85,5 @@ module KrylovArnoldiSolver
 
 
 
-    function evolve_KrylovArnodli(
-        solver::KrylovArnoldiSystem,
-        ψ0::SparseVector{Float64, Int64},
-        time_points::Vector{Float64},
-        observables::Vector{SparseMatrixCSC{Float64, Int}},
-        method::Symbol=:krylov,
-    )
-        return evolve(
-            solver,
-            ψ0,
-            time_points,
-            observables;
-            method=method,
-        )
-    end
-
-
+   
 end  # End of KrylovArnoldiSolver module

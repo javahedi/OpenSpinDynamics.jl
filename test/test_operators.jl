@@ -6,27 +6,27 @@ using SparseArrays
 @testset "Pauli operators" begin
     
     @testset "Input validation" begin
-        @test_throws ArgumentError generate_operators(0)
-        @test_throws ArgumentError generate_operators(-1)
+        @test_throws ArgumentError spin_operators(0)
+        @test_throws ArgumentError spin_operators(-1)
     end
 
     @testset "Dimensions" begin
         N = 3
-        paulis = generate_operators(N)
+        ops = spin_operators(N)
 
-        @test size(paulis.Xop[1]) == (2^N, 2^N)
-        @test size(paulis.Zop[2]) == (2^N, 2^N)
-        @test size(paulis.Pop[3]) == (2^N, 2^N)
-        @test size(paulis.Nop[1]) == (2^N, 2^N)
+        @test size(ops.x[1]) == (2^N, 2^N)
+        @test size(ops.z[2]) == (2^N, 2^N)
+        @test size(ops.plus[3]) == (2^N, 2^N)
+        @test size(ops.minus[1]) == (2^N, 2^N)
     end
 
     @testset "Single-spin algebra" begin
-        paulis = generate_operators(1)
+        ops = spin_operators(1)
 
-        X = Matrix(paulis.Xop[1])
-        Z = Matrix(paulis.Zop[1])
-        P = Matrix(paulis.Pop[1])
-        N = Matrix(paulis.Nop[1])
+        X = Matrix(ops.x[1])
+        Z = Matrix(ops.z[1])
+        P = Matrix(ops.plus[1])
+        N = Matrix(ops.minus[1])
         I2 = Matrix{Float64}(I, 2, 2)
 
         @test X * X ≈ I2
@@ -38,10 +38,10 @@ using SparseArrays
     end
 
     @testset "Different sites commute" begin
-        paulis = generate_operators(2)
+        ops = spin_operators(2)
 
-        X1 = paulis.Xop[1]
-        Z2 = paulis.Zop[2]
+        X1 = ops.x[1]
+        Z2 = ops.z[2]
 
         @test X1 * Z2 ≈ Z2 * X1
     end

@@ -15,7 +15,7 @@ using Random
         ])
 
         times = [0.0, 0.1, 0.5, 1.0]
-        system = StochasticWavefunctionSystem(H, [L])
+        system = TrajectorySystem(H, [L])
 
         mean_values, std_values = evolve(
             system,
@@ -39,7 +39,7 @@ using Random
         ψ0 = sparsevec([1], [1.0], 2)
         Z = sparse([1.0 0.0; 0.0 -1.0])
 
-        system = StochasticWavefunctionSystem(H, [L])
+        system = TrajectorySystem(H, [L])
 
         mean_values, std_values = evolve(
             system,
@@ -60,7 +60,7 @@ using Random
         ψ0 = sparsevec([1], [1.0], 2)
         Z = sparse([1.0 0.0; 0.0 -1.0])
 
-        system = StochasticWavefunctionSystem(H, [L])
+        system = TrajectorySystem(H, [L])
 
         @test_throws ArgumentError evolve(
             system,
@@ -89,9 +89,33 @@ using Random
         H = spzeros(Float64, 2, 2)
         bad_L = spzeros(Float64, 3, 3)
 
-        @test_throws ArgumentError StochasticWavefunctionSystem(
+        @test_throws ArgumentError TrajectorySystem(
             H,
             [bad_L],
         )
     end
+
+
+
+    @testset "Construct from SpinModel" begin
+        model = SpinModel(
+            1;
+            Jxy=0.0,
+            Jz=0.0,
+        )
+
+        L = spzeros(Float64, 2, 2)
+
+        system = TrajectorySystem(
+            model,
+            [L],
+        )
+
+        @test system.hamiltonian == complex.(model.hamiltonian)
+        @test length(system.lindblad_ops) == 1
+    end
+
+
+
+    
 end
