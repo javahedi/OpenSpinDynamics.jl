@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Amplitude damping · OpenSpinDynamics.jl</title><meta name="title" content="Amplitude damping · OpenSpinDynamics.jl"/><meta property="og:title" content="Amplitude damping · OpenSpinDynamics.jl"/><meta property="twitter:title" content="Amplitude damping · OpenSpinDynamics.jl"/><meta name="description" content="Documentation for OpenSpinDynamics.jl."/><meta property="og:description" content="Documentation for OpenSpinDynamics.jl."/><meta property="twitter:description" content="Documentation for OpenSpinDynamics.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">OpenSpinDynamics.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><a class="tocitem" href="../../getting_started/">Getting Started</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../closed_xxz/">Closed XXZ dynamics</a></li><li class="is-active"><a class="tocitem" href>Amplitude damping</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Lindblad-evolution"><span>Lindblad evolution</span></a></li><li><a class="tocitem" href="#Numerical-result"><span>Numerical result</span></a></li></ul></li><li><a class="tocitem" href="../dissipative_xxz/">Dissipative XXZ chain</a></li><li><a class="tocitem" href="../trajectories_vs_lindblad/">Trajectories vs Lindblad</a></li></ul></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Amplitude damping</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Amplitude damping</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl/blob/main/docs/src/examples/amplitude_damping.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Amplitude-Damping"><a class="docs-heading-anchor" href="#Amplitude-Damping">Amplitude Damping</a><a id="Amplitude-Damping-1"></a><a class="docs-heading-anchor-permalink" href="#Amplitude-Damping" title="Permalink"></a></h1><p>Amplitude damping is one of the simplest open quantum-system models. It describes irreversible decay from an excited spin state to the ground state through coupling to an environment.</p><p>For a single spin with zero Hamiltonian,</p><p class="math-container">\[H = 0,\]</p><p>and collapse operator</p><p class="math-container">\[L = \sqrt{\gamma}\,\sigma_-,\]</p><p>the density matrix evolves according to the Lindblad master equation</p><p class="math-container">\[\frac{d\rho}{dt}
+=
+-i[H,\rho]
++
+L\rho L^\dagger
+-
+\frac{1}{2}
+\left\{
+L^\dagger L,\rho
+\right\}.\]</p><p>Starting from the excited state, the excited-state population decays exponentially,</p><p class="math-container">\[P_{\uparrow}(t) = e^{-\gamma t}.\]</p><p>This provides a simple analytic benchmark for the open-system evolution implemented in OpenSpinDynamics.jl.</p><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>We construct a single-spin model with a vanishing Hamiltonian and use <span>$spin_operators$</span> to obtain the lowering operator.</p><pre><code class="language-julia hljs">using OpenSpinDynamics
+using SparseArrays
+using LinearAlgebra
+using CairoMakie
+
+γ = 0.5
+N = 1
+
+model = SpinModel(
+    N;
+    Jxy=0.0,
+    Jz=0.0,
+)
+
+ops = spin_operators(N)</code></pre><p>The initial state is chosen to be the spin-up state along the <span>$z$</span> direction.</p><pre><code class="language-julia hljs">ψ0 = polarized_state(
+    N;
+    direction=:z,
+)
+
+ρ0 = sparse(ψ0 * ψ0&#39;)</code></pre><p>The amplitude-damping collapse operator is</p><p class="math-container">\[L = \sqrt{\gamma}\,\sigma_-.\]</p><pre><code class="language-julia hljs">lindblad_ops = [
+    sqrt(γ) * ops.minus[1],
+]</code></pre><p>To measure the excited-state population, we use the projector</p><p class="math-container">\[P_\uparrow
+=
+\frac{I+\sigma_z}{2}.\]</p><pre><code class="language-julia hljs">I2 = sparse(Matrix{Float64}(I, 2, 2))
+
+Pup = 0.5 .* (
+    I2 + ops.z[1]
+)
+
+times = collect(
+    range(0.0, 8.0; length=200)
+)</code></pre><h2 id="Lindblad-evolution"><a class="docs-heading-anchor" href="#Lindblad-evolution">Lindblad evolution</a><a id="Lindblad-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Lindblad-evolution" title="Permalink"></a></h2><p>The density matrix can now be evolved directly from the <code>SpinModel</code>.</p><pre><code class="language-julia hljs">population = evolve(
+    model,
+    ρ0,
+    times,
+    [Pup];
+    method=:expm,
+    lindblad_ops=lindblad_ops,
+)</code></pre><p>For this model, the exact solution is</p><p class="math-container">\[P_{\uparrow}(t)
+=
+e^{-\gamma t}.\]</p><pre><code class="language-julia hljs">exact = exp.(-γ .* times)
+
+max_error = maximum(
+    abs.(population[:, 1] .- exact)
+)
+
+max_error</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3.3306690738754696e-16</code></pre><p>The numerical result should agree with the analytic solution up to numerical precision.</p><h2 id="Numerical-result"><a class="docs-heading-anchor" href="#Numerical-result">Numerical result</a><a id="Numerical-result-1"></a><a class="docs-heading-anchor-permalink" href="#Numerical-result" title="Permalink"></a></h2><pre><code class="language-julia hljs">fig = Figure(size=(700, 420))
+
+ax = Axis(
+    fig[1, 1];
+    xlabel=&quot;Time&quot;,
+    ylabel=&quot;Excited-state population&quot;,
+    title=&quot;Single-spin amplitude damping&quot;,
+)
+
+lines!(
+    ax,
+    times,
+    population[:, 1];
+    label=&quot;OpenSpinDynamics.jl&quot;,
+    linewidth=2,
+)
+
+lines!(
+    ax,
+    times,
+    exact;
+    label=&quot;Exact&quot;,
+    linestyle=:dash,
+    linewidth=2,
+)
+
+axislegend(ax)
+
+fig</code></pre><img src="c83dc974.png" alt="Example block output"/><p>The excited-state population decays exponentially from one to zero. The numerical Lindblad evolution follows the exact result</p><p class="math-container">\[P_{\uparrow}(t)=e^{-\gamma t},\]</p><p>demonstrating the expected dissipative dynamics of a single spin undergoing amplitude damping.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../closed_xxz/">« Closed XXZ dynamics</a><a class="docs-footer-nextpage" href="../dissipative_xxz/">Dissipative XXZ chain »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 20 August 2026 11:16">Thursday 20 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

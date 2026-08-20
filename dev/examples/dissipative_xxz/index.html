@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Dissipative XXZ chain · OpenSpinDynamics.jl</title><meta name="title" content="Dissipative XXZ chain · OpenSpinDynamics.jl"/><meta property="og:title" content="Dissipative XXZ chain · OpenSpinDynamics.jl"/><meta property="twitter:title" content="Dissipative XXZ chain · OpenSpinDynamics.jl"/><meta name="description" content="Documentation for OpenSpinDynamics.jl."/><meta property="og:description" content="Documentation for OpenSpinDynamics.jl."/><meta property="twitter:description" content="Documentation for OpenSpinDynamics.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">OpenSpinDynamics.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><a class="tocitem" href="../../getting_started/">Getting Started</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../closed_xxz/">Closed XXZ dynamics</a></li><li><a class="tocitem" href="../amplitude_damping/">Amplitude damping</a></li><li class="is-active"><a class="tocitem" href>Dissipative XXZ chain</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Initial-state"><span>Initial state</span></a></li><li><a class="tocitem" href="#Local-decay"><span>Local decay</span></a></li><li><a class="tocitem" href="#Observables"><span>Observables</span></a></li><li><a class="tocitem" href="#Lindblad-evolution"><span>Lindblad evolution</span></a></li><li><a class="tocitem" href="#Magnetization-dynamics"><span>Magnetization dynamics</span></a></li></ul></li><li><a class="tocitem" href="../trajectories_vs_lindblad/">Trajectories vs Lindblad</a></li></ul></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Dissipative XXZ chain</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Dissipative XXZ chain</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl/blob/main/docs/src/examples/dissipative_xxz.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Dissipative-XXZ-Chain"><a class="docs-heading-anchor" href="#Dissipative-XXZ-Chain">Dissipative XXZ Chain</a><a id="Dissipative-XXZ-Chain-1"></a><a class="docs-heading-anchor-permalink" href="#Dissipative-XXZ-Chain" title="Permalink"></a></h1><p>A many-body spin system becomes an open quantum system when it exchanges energy or information with an environment. A standard example is an interacting XXZ chain subject to local spontaneous emission.</p><p>We consider the Hamiltonian</p><p class="math-container">\[H =
+\sum_{i&lt;j}
+J_{ij}
+\left[
+J_{xy}
+\left(
+\sigma_i^+ \sigma_j^- +
+\sigma_i^- \sigma_j^+
+\right)
++
+J_z \sigma_i^z \sigma_j^z
+\right],\]</p><p>with nearest-neighbor couplings and local collapse operators</p><p class="math-container">\[L_i = \sqrt{\gamma}\,\sigma_i^-.\]</p><p>The density matrix obeys the Lindblad master equation</p><p class="math-container">\[\frac{d\rho}{dt}
+=
+-i[H,\rho]
++
+\sum_i
+\left(
+L_i \rho L_i^\dagger
+-
+\frac{1}{2}
+\left\{
+L_i^\dagger L_i,\rho
+\right\}
+\right).\]</p><p>Starting from a Néel state, coherent XXZ interactions compete with irreversible spin relaxation.</p><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><pre><code class="language-julia hljs">using OpenSpinDynamics
+using SparseArrays
+using CairoMakie
+
+N = 4
+γ = 0.3
+
+coupling = NearestNeighborCoupling(
+    0.0,
+    N,
+)
+
+model = SpinModel(
+    N;
+    Jxy=1.0,
+    Jz=0.5,
+    coupling=coupling,
+)
+
+ops = spin_operators(N)</code></pre><h2 id="Initial-state"><a class="docs-heading-anchor" href="#Initial-state">Initial state</a><a id="Initial-state-1"></a><a class="docs-heading-anchor-permalink" href="#Initial-state" title="Permalink"></a></h2><p>We initialize the chain in a Néel product state,</p><p class="math-container">\[|\psi_0\rangle =
+|\uparrow\downarrow\uparrow\downarrow\rangle,\]</p><p>and convert it to a density matrix.</p><pre><code class="language-julia hljs">ψ0 = neel_state(
+    N;
+    direction=:z,
+)
+
+ρ0 = sparse(ψ0 * ψ0&#39;)</code></pre><h2 id="Local-decay"><a class="docs-heading-anchor" href="#Local-decay">Local decay</a><a id="Local-decay-1"></a><a class="docs-heading-anchor-permalink" href="#Local-decay" title="Permalink"></a></h2><p>Each spin is coupled independently to a zero-temperature environment through a lowering operator.</p><pre><code class="language-julia hljs">lindblad_ops = [
+    sqrt(γ) * ops.minus[i]
+    for i in 1:N
+]</code></pre><h2 id="Observables"><a class="docs-heading-anchor" href="#Observables">Observables</a><a id="Observables-1"></a><a class="docs-heading-anchor-permalink" href="#Observables" title="Permalink"></a></h2><p>We monitor two quantities.</p><p>The average longitudinal magnetization is</p><p class="math-container">\[M_z =
+\frac{1}{N}
+\sum_{i=1}^{N}
+\sigma_i^z,\]</p><p>while the staggered magnetization is</p><p class="math-container">\[M_s =
+\frac{1}{N}
+\sum_{i=1}^{N}
+(-1)^{i-1}\sigma_i^z.\]</p><pre><code class="language-julia hljs">Mz = sum(
+    ops.z[i]
+    for i in 1:N
+) / N
+
+Mstag = sum(
+    (-1)^(i - 1) * ops.z[i]
+    for i in 1:N
+) / N
+
+times = collect(
+    range(0.0, 4.0; length=121)
+)</code></pre><p>For the initial Néel state, the uniform magnetization is zero while the staggered magnetization is one.</p><pre><code class="language-julia hljs">initial_Mz = real(ψ0&#39; * Mz * ψ0)
+initial_Mstag = real(ψ0&#39; * Mstag * ψ0)
+
+(initial_Mz, initial_Mstag)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(0.0, 1.0)</code></pre><h2 id="Lindblad-evolution"><a class="docs-heading-anchor" href="#Lindblad-evolution">Lindblad evolution</a><a id="Lindblad-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Lindblad-evolution" title="Permalink"></a></h2><p>For this small chain we use the exponential Lindblad backend.</p><pre><code class="language-julia hljs">result = evolve(
+    model,
+    ρ0,
+    times,
+    [Mz, Mstag];
+    method=:expm,
+    lindblad_ops=lindblad_ops,
+)</code></pre><p>The first column contains <span>$\langle M_z\rangle$</span> and the second contains <span>$\langle M_s\rangle$</span>.</p><h2 id="Magnetization-dynamics"><a class="docs-heading-anchor" href="#Magnetization-dynamics">Magnetization dynamics</a><a id="Magnetization-dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#Magnetization-dynamics" title="Permalink"></a></h2><pre><code class="language-julia hljs">fig = Figure(size=(720, 430))
+
+ax = Axis(
+    fig[1, 1];
+    xlabel=&quot;Time&quot;,
+    ylabel=&quot;Magnetization&quot;,
+    title=&quot;Dissipative XXZ chain with local decay&quot;,
+)
+
+lines!(
+    ax,
+    times,
+    result[:, 1];
+    label=&quot;Average magnetization&quot;,
+    linewidth=2,
+)
+
+lines!(
+    ax,
+    times,
+    result[:, 2];
+    label=&quot;Staggered magnetization&quot;,
+    linewidth=2,
+)
+
+axislegend(ax)
+
+fig</code></pre><img src="1b380b5a.png" alt="Example block output"/><p>The staggered order decreases as the interacting system evolves away from the initial Néel state. At the same time, spontaneous emission drives the spins toward the down-polarized state, causing the average longitudinal magnetization to become increasingly negative.</p><p>This example combines coherent many-body XXZ dynamics with local Markovian dissipation using the same high-level <code>evolve</code> interface.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../amplitude_damping/">« Amplitude damping</a><a class="docs-footer-nextpage" href="../trajectories_vs_lindblad/">Trajectories vs Lindblad »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 20 August 2026 11:16">Thursday 20 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Getting Started · OpenSpinDynamics.jl</title><meta name="title" content="Getting Started · OpenSpinDynamics.jl"/><meta property="og:title" content="Getting Started · OpenSpinDynamics.jl"/><meta property="twitter:title" content="Getting Started · OpenSpinDynamics.jl"/><meta name="description" content="Documentation for OpenSpinDynamics.jl."/><meta property="og:description" content="Documentation for OpenSpinDynamics.jl."/><meta property="twitter:description" content="Documentation for OpenSpinDynamics.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">OpenSpinDynamics.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Getting Started</a><ul class="internal"><li><a class="tocitem" href="#Installation"><span>Installation</span></a></li><li><a class="tocitem" href="#Build-a-spin-model"><span>Build a spin model</span></a></li><li><a class="tocitem" href="#Couplings"><span>Couplings</span></a></li><li><a class="tocitem" href="#Initial-states"><span>Initial states</span></a></li><li><a class="tocitem" href="#Spin-operators"><span>Spin operators</span></a></li><li><a class="tocitem" href="#Closed-system-evolution"><span>Closed-system evolution</span></a></li><li><a class="tocitem" href="#Lindblad-evolution"><span>Lindblad evolution</span></a></li><li><a class="tocitem" href="#Quantum-trajectories"><span>Quantum trajectories</span></a></li><li><a class="tocitem" href="#Updating-a-model"><span>Updating a model</span></a></li><li><a class="tocitem" href="#Where-to-go-next"><span>Where to go next</span></a></li></ul></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../examples/closed_xxz/">Closed XXZ dynamics</a></li><li><a class="tocitem" href="../examples/amplitude_damping/">Amplitude damping</a></li><li><a class="tocitem" href="../examples/dissipative_xxz/">Dissipative XXZ chain</a></li><li><a class="tocitem" href="../examples/trajectories_vs_lindblad/">Trajectories vs Lindblad</a></li></ul></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Getting Started</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Getting Started</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/javahedi/OpenSpinDynamics.jl/blob/main/docs/src/getting_started.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Getting-Started"><a class="docs-heading-anchor" href="#Getting-Started">Getting Started</a><a id="Getting-Started-1"></a><a class="docs-heading-anchor-permalink" href="#Getting-Started" title="Permalink"></a></h1><p>OpenSpinDynamics.jl provides a compact interface for simulating closed and open quantum spin dynamics.</p><p>A typical workflow has four steps:</p><ol><li>define the coupling,</li><li>construct a <code>SpinModel</code>,</li><li>prepare an initial state and observables,</li><li>call <code>evolve</code>.</li></ol><p>This page introduces the core public API with small examples.</p><h2 id="Installation"><a class="docs-heading-anchor" href="#Installation">Installation</a><a id="Installation-1"></a><a class="docs-heading-anchor-permalink" href="#Installation" title="Permalink"></a></h2><p>OpenSpinDynamics.jl can be added from its repository while the package is under active development.</p><pre><code class="language-julia hljs">using Pkg
+
+Pkg.add(
+    url=&quot;https://github.com/javahedi/OpenSpinDynamics.jl&quot;,
+)</code></pre><p>Then load the package with</p><pre><code class="language-julia hljs">using OpenSpinDynamics
+using SparseArrays</code></pre><h2 id="Build-a-spin-model"><a class="docs-heading-anchor" href="#Build-a-spin-model">Build a spin model</a><a id="Build-a-spin-model-1"></a><a class="docs-heading-anchor-permalink" href="#Build-a-spin-model" title="Permalink"></a></h2><p>As a first example, consider a four-spin nearest-neighbor XXZ chain.</p><pre><code class="language-julia hljs">N = 4
+
+coupling = NearestNeighborCoupling(
+    0.0,
+    N,
+)
+
+model = SpinModel(
+    N;
+    Jxy=1.0,
+    Jz=0.5,
+    coupling=coupling,
+)
+
+size(model.hamiltonian)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(16, 16)</code></pre><p>For <code>N</code> spin-1/2 degrees of freedom, the Hilbert-space dimension is <span>$2^N$</span>.</p><p>The main model keywords are:</p><ul><li><code>Jxy</code>: transverse exchange strength,</li><li><code>Jz</code>: longitudinal interaction strength,</li><li><code>hx</code>: local <span>$x$</span> fields,</li><li><code>hz</code>: local <span>$z$</span> fields,</li><li><code>coupling</code>: a coupling object,</li><li><code>Jmn</code>: an explicit coupling matrix for custom interactions.</li></ul><p>For example, a model with local fields can be written as</p><pre><code class="language-julia hljs">field_model = SpinModel(
+    N;
+    Jxy=1.0,
+    Jz=0.5,
+    hx=fill(0.2, N),
+    hz=zeros(N),
+    coupling=coupling,
+)</code></pre><h2 id="Couplings"><a class="docs-heading-anchor" href="#Couplings">Couplings</a><a id="Couplings-1"></a><a class="docs-heading-anchor-permalink" href="#Couplings" title="Permalink"></a></h2><p>OpenSpinDynamics.jl provides several coupling constructors.</p><h3 id="Nearest-neighbor-coupling"><a class="docs-heading-anchor" href="#Nearest-neighbor-coupling">Nearest-neighbor coupling</a><a id="Nearest-neighbor-coupling-1"></a><a class="docs-heading-anchor-permalink" href="#Nearest-neighbor-coupling" title="Permalink"></a></h3><pre><code class="language-julia hljs">nearest = NearestNeighborCoupling(
+    0.2,
+    N,
+)
+
+nearest.matrix</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4×4 Matrix{Float64}:
+ 0.0  0.8  0.0  0.0
+ 0.8  0.0  1.2  0.0
+ 0.0  1.2  0.0  0.8
+ 0.0  0.0  0.8  0.0</code></pre><p>The parameter <code>δ</code> controls alternating nearest-neighbor bond strengths.</p><h3 id="Clean-long-range-coupling"><a class="docs-heading-anchor" href="#Clean-long-range-coupling">Clean long-range coupling</a><a id="Clean-long-range-coupling-1"></a><a class="docs-heading-anchor-permalink" href="#Clean-long-range-coupling" title="Permalink"></a></h3><pre><code class="language-julia hljs">long_range = LongRangeCouplingClean(
+    2.0,
+    N,
+)
+
+long_range.matrix</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4×4 Matrix{Float64}:
+ 0.0       1.0   0.25  0.111111
+ 1.0       0.0   1.0   0.25
+ 0.25      1.0   0.0   1.0
+ 0.111111  0.25  1.0   0.0</code></pre><p>For this coupling,</p><p class="math-container">\[J_{ij}
+\propto
+\frac{1}{|i-j|^\alpha}.\]</p><h3 id="Disordered-long-range-coupling"><a class="docs-heading-anchor" href="#Disordered-long-range-coupling">Disordered long-range coupling</a><a id="Disordered-long-range-coupling-1"></a><a class="docs-heading-anchor-permalink" href="#Disordered-long-range-coupling" title="Permalink"></a></h3><pre><code class="language-julia hljs">disordered = LongRangeCouplingDisorder(
+    2.0,
+    20,
+    N;
+    reordered=false,
+)
+
+size(disordered.matrix)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(4, 4)</code></pre><p>Here <code>N</code> spins are sampled from a lattice containing <code>L=20</code> available sites.</p><h2 id="Initial-states"><a class="docs-heading-anchor" href="#Initial-states">Initial states</a><a id="Initial-states-1"></a><a class="docs-heading-anchor-permalink" href="#Initial-states" title="Permalink"></a></h2><p>Two common product states are available directly.</p><h3 id="Néel-state"><a class="docs-heading-anchor" href="#Néel-state">Néel state</a><a id="Néel-state-1"></a><a class="docs-heading-anchor-permalink" href="#Néel-state" title="Permalink"></a></h3><pre><code class="language-julia hljs">ψ_neel = neel_state(
+    N;
+    direction=:z,
+)
+
+size(ψ_neel)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(16,)</code></pre><p>This produces the alternating state</p><p class="math-container">\[|\uparrow\downarrow\uparrow\downarrow\cdots\rangle.\]</p><h3 id="Polarized-state"><a class="docs-heading-anchor" href="#Polarized-state">Polarized state</a><a id="Polarized-state-1"></a><a class="docs-heading-anchor-permalink" href="#Polarized-state" title="Permalink"></a></h3><pre><code class="language-julia hljs">ψ_polarized = polarized_state(
+    N;
+    direction=:z,
+)
+
+size(ψ_polarized)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(16,)</code></pre><p>This produces</p><p class="math-container">\[|\uparrow\uparrow\uparrow\uparrow\cdots\rangle.\]</p><p>Both state constructors also support <code>direction=:x</code>.</p><h2 id="Spin-operators"><a class="docs-heading-anchor" href="#Spin-operators">Spin operators</a><a id="Spin-operators-1"></a><a class="docs-heading-anchor-permalink" href="#Spin-operators" title="Permalink"></a></h2><p>Use <code>spin_operators</code> to construct single-site observables on the full Hilbert space.</p><pre><code class="language-julia hljs">ops = spin_operators(N)
+
+size(ops.z[1])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(16, 16)</code></pre><p>The returned <code>SpinOperators</code> object contains:</p><ul><li><code>ops.x[i]</code>,</li><li><code>ops.z[i]</code>,</li><li><code>ops.plus[i]</code>,</li><li><code>ops.minus[i]</code>.</li></ul><p>For example, the average longitudinal magnetization is</p><p class="math-container">\[M_z =
+\frac{1}{N}
+\sum_{i=1}^{N}\sigma_i^z.\]</p><pre><code class="language-julia hljs">Mz = sum(
+    ops.z[i]
+    for i in 1:N
+) / N</code></pre><h2 id="Closed-system-evolution"><a class="docs-heading-anchor" href="#Closed-system-evolution">Closed-system evolution</a><a id="Closed-system-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Closed-system-evolution" title="Permalink"></a></h2><p>For pure-state dynamics, pass a wavefunction to <code>evolve</code>.</p><pre><code class="language-julia hljs">times = collect(
+    range(0.0, 2.0; length=51)
+)
+
+result = evolve(
+    model,
+    ψ_neel,
+    times,
+    [Mz];
+    method=:krylov,
+)
+
+size(result)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(51, 1)</code></pre><p>The rows correspond to time points and the columns correspond to observables.</p><p>The closed-system methods are:</p><ul><li><code>method=:krylov</code>,</li><li><code>method=:arnoldi</code>.</li></ul><p>For example,</p><pre><code class="language-julia hljs">result_arnoldi = evolve(
+    model,
+    ψ_neel,
+    times,
+    [Mz];
+    method=:arnoldi,
+)
+
+maximum(
+    abs.(
+        result[:, 1] .-
+        result_arnoldi[:, 1]
+    )
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.0</code></pre><h2 id="Lindblad-evolution"><a class="docs-heading-anchor" href="#Lindblad-evolution">Lindblad evolution</a><a id="Lindblad-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Lindblad-evolution" title="Permalink"></a></h2><p>For Markovian open-system dynamics, provide a density matrix and collapse operators.</p><p>Consider local spontaneous emission,</p><p class="math-container">\[L_i = \sqrt{\gamma}\,\sigma_i^-.\]</p><pre><code class="language-julia hljs">γ = 0.2
+
+lindblad_ops = [
+    sqrt(γ) * ops.minus[i]
+    for i in 1:N
+]
+
+ρ0 = sparse(
+    ψ_neel * ψ_neel&#39;
+)</code></pre><p>The density matrix can then be evolved with</p><pre><code class="language-julia hljs">open_result = evolve(
+    model,
+    ρ0,
+    times,
+    [Mz];
+    method=:expm,
+    lindblad_ops=lindblad_ops,
+)
+
+size(open_result)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(51, 1)</code></pre><p>The supported density-matrix methods are:</p><ul><li><code>method=:expm</code>,</li><li><code>method=:ode</code>.</li></ul><p>For small Hilbert spaces, <code>:expm</code> is often a convenient reference method.</p><h2 id="Quantum-trajectories"><a class="docs-heading-anchor" href="#Quantum-trajectories">Quantum trajectories</a><a id="Quantum-trajectories-1"></a><a class="docs-heading-anchor-permalink" href="#Quantum-trajectories" title="Permalink"></a></h2><p>The same dissipative problem can be treated with stochastic quantum trajectories.</p><pre><code class="language-julia hljs">trajectory_mean, trajectory_std = evolve(
+    model,
+    ψ_neel,
+    times,
+    [Mz];
+    method=:trajectories,
+    lindblad_ops=lindblad_ops,
+    num_samples=20,
+)
+
+size(trajectory_mean)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(51, 1)</code></pre><p>The trajectory method returns both the sample mean and sample standard deviation.</p><p>For accurate Monte Carlo estimates, increase <code>num_samples</code>.</p><h2 id="Updating-a-model"><a class="docs-heading-anchor" href="#Updating-a-model">Updating a model</a><a id="Updating-a-model-1"></a><a class="docs-heading-anchor-permalink" href="#Updating-a-model" title="Permalink"></a></h2><p>An existing model can be updated in place.</p><pre><code class="language-julia hljs">update_model!(
+    model;
+    hz=fill(0.1, N),
+)
+
+model.hz</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element Vector{Float64}:
+ 0.1
+ 0.1
+ 0.1
+ 0.1</code></pre><p>Couplings can also be replaced directly:</p><pre><code class="language-julia hljs">update_model!(
+    model;
+    coupling=LongRangeCouplingClean(2.0, N),
+)
+
+size(model.hamiltonian)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(16, 16)</code></pre><p>Unspecified parameters retain their current values.</p><h2 id="Where-to-go-next"><a class="docs-heading-anchor" href="#Where-to-go-next">Where to go next</a><a id="Where-to-go-next-1"></a><a class="docs-heading-anchor-permalink" href="#Where-to-go-next" title="Permalink"></a></h2><p>The worked examples explore the main workflows in more detail:</p><ul><li><a href="../examples/closed_xxz/">Closed XXZ dynamics</a></li><li><a href="../examples/amplitude_damping/">Amplitude damping</a></li><li><a href="../examples/dissipative_xxz/">Dissipative XXZ chain</a></li><li><a href="../examples/trajectories_vs_lindblad/">Quantum trajectories vs Lindblad dynamics</a></li></ul><p>For all exported functions and types, see the <a href="../api/">API Reference</a>.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../examples/closed_xxz/">Closed XXZ dynamics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 20 August 2026 11:16">Thursday 20 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
