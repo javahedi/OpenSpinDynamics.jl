@@ -3,6 +3,7 @@ module SpinModels
 
 using SparseArrays
 using ..Operators: spin_operators
+using ..Coupling: AbstractCoupling
 export SpinModel, update_model!
 
 mutable struct SpinModel
@@ -40,10 +41,17 @@ function SpinModel(
     Jz::Real=1.0,
     hx::AbstractVector{<:Real}=zeros(N),
     hz::AbstractVector{<:Real}=zeros(N),
-    Jmn::AbstractMatrix{<:Real}=zeros(N, N),
+    Jmn::Union{Nothing, AbstractMatrix{<:Real}}=nothing,
+    coupling::Union{Nothing, AbstractCoupling}=nothing,
 )
     N > 0 ||
         throw(ArgumentError("N must be positive"))
+
+    if Jmn !== nothing && coupling !== nothing
+        throw(ArgumentError(
+            "Specify either Jmn or coupling, not both",
+        ))
+    end
 
     length(hx) == N ||
         throw(DimensionMismatch("hx must have length $N"))
@@ -51,12 +59,28 @@ function SpinModel(
     length(hz) == N ||
         throw(DimensionMismatch("hz must have length $N"))
 
-    size(Jmn) == (N, N) ||
-        throw(DimensionMismatch("Jmn must have size ($N, $N)"))
+    J_matrix = if coupling !== nothing
+        coupling.N == N ||
+            throw(DimensionMismatch(
+                "coupling.N must match N",
+            ))
+
+        copy(coupling.matrix)
+
+    elseif Jmn !== nothing
+        size(Jmn) == (N, N) ||
+            throw(DimensionMismatch(
+                "Jmn must have size ($N, $N)",
+            ))
+
+        Matrix{Float64}(Jmn)
+
+    else
+        zeros(Float64, N, N)
+    end
 
     hx_vec = Float64.(hx)
     hz_vec = Float64.(hz)
-    J_matrix = Matrix{Float64}(Jmn)
 
     hamiltonian = spzeros(Float64, 2^N, 2^N)
     ops = spin_operators(N)
@@ -96,7 +120,6 @@ end
 
 
 
-
 """
     update_model!(model::SpinModel, Jxy::Float64, Jz::Float64; kwargs...)
 
@@ -121,9 +144,16 @@ function update_model!(
     Jz::Real=model.Jz,
     hx::AbstractVector{<:Real}=model.hx,
     hz::AbstractVector{<:Real}=model.hz,
-    Jmn::AbstractMatrix{<:Real}=model.Jmn,
+    Jmn::Union{Nothing, AbstractMatrix{<:Real}}=nothing,
+    coupling::Union{Nothing, AbstractCoupling}=nothing,
 )
     N = model.N
+
+    if Jmn !== nothing && coupling !== nothing
+        throw(ArgumentError(
+            "Specify either Jmn or coupling, not both",
+        ))
+    end
 
     length(hx) == N ||
         throw(DimensionMismatch("hx must have length $N"))
@@ -131,12 +161,29 @@ function update_model!(
     length(hz) == N ||
         throw(DimensionMismatch("hz must have length $N"))
 
-    size(Jmn) == (N, N) ||
-        throw(DimensionMismatch("Jmn must have size ($N, $N)"))
+    J_matrix = if coupling !== nothing
+        coupling.N == N ||
+            throw(DimensionMismatch(
+                "coupling.N must match model.N",
+            ))
+
+        copy(coupling.matrix)
+
+    elseif Jmn !== nothing
+        size(Jmn) == (N, N) ||
+            throw(DimensionMismatch(
+                "Jmn must have size ($N, $N)",
+            ))
+
+        Matrix{Float64}(Jmn)
+
+    else
+        copy(model.Jmn)
+    end
 
     hx_vec = Float64.(hx)
     hz_vec = Float64.(hz)
-    J_matrix = Matrix{Float64}(Jmn)
+
 
     hamiltonian = spzeros(Float64, 2^N, 2^N)
     ops = spin_operators(N)

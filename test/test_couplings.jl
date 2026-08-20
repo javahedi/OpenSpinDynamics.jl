@@ -139,4 +139,77 @@ using Random
             -1,
         )
     end
+
+
+    @testset "Coupling object constructor" begin
+        N = 4
+        coupling = NearestNeighborCoupling(0.0, N)
+
+        m = SpinModel(
+            N;
+            Jxy=1.0,
+            Jz=1.0,
+            coupling=coupling,
+        )
+
+        @test m.Jmn == coupling.matrix
+    end
+
+
+    @testset "Coupling and matrix agree" begin
+        N = 4
+        coupling = LongRangeCouplingClean(2.0, N)
+
+        m_coupling = SpinModel(
+            N;
+            Jxy=1.0,
+            Jz=0.5,
+            coupling=coupling,
+        )
+
+        m_matrix = SpinModel(
+            N;
+            Jxy=1.0,
+            Jz=0.5,
+            Jmn=coupling.matrix,
+        )
+
+        @test m_coupling.hamiltonian ≈ m_matrix.hamiltonian
+    end
+
+
+    @testset "Coupling validation" begin
+        @test_throws DimensionMismatch SpinModel(
+            2;
+            coupling=NearestNeighborCoupling(0.0, 3),
+        )
+
+        @test_throws ArgumentError SpinModel(
+            2;
+            Jmn=zeros(2, 2),
+            coupling=NearestNeighborCoupling(0.0, 2),
+        )
+    end
+
+
+    @testset "Update model coupling validation" begin
+        m = SpinModel(
+            4;
+            Jxy=1.0,
+            Jz=1.0,
+            coupling=NearestNeighborCoupling(0.0, 4),
+        )
+
+        @test_throws DimensionMismatch update_model!(
+            m;
+            coupling=NearestNeighborCoupling(0.0, 3),
+        )
+
+        @test_throws ArgumentError update_model!(
+            m;
+            Jmn=zeros(4, 4),
+            coupling=NearestNeighborCoupling(0.0, 4),
+        )
+    end
+
 end
