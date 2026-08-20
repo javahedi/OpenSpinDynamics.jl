@@ -25,9 +25,15 @@ using .SpinModels:
 
 include("lindblad.jl")
 
+using .LindbladSolver:
+    LindbladSystem
+
 include("krylov.jl")
 
 include("trajectories.jl")
+
+using .TrajectorySolver:
+    TrajectorySystem
 
 
 include("evolution.jl")
