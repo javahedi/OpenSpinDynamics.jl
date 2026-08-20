@@ -3,6 +3,7 @@ module TrajectorySolver
 using LinearAlgebra
 using SparseArrays
 using Statistics
+using Random
 
 import ..evolve
 using ..SpinModels: SpinModel
@@ -51,69 +52,6 @@ function TrajectorySystem(
     return TrajectorySystem(H, Ls, Heff)
 end
 
-# function _stochastic_evolution(
-#     solver::TrajectorySystem,
-#     ψ0::Vector{ComplexF64},
-#     time_points::Vector{Float64},
-#     observables::Vector{SparseMatrixCSC{ComplexF64, Int64}},
-#     num_samples::Int,
-# )
-#     m = length(time_points)
-
-#     LdagL = [L' * L for L in solver.lindblad_ops]
-
-#     values = zeros(
-#         Float64,
-#         m,
-#         length(observables),
-#         num_samples,
-#     )
-
-#     for sample in 1:num_samples
-#         ψ = copy(ψ0)
-
-#         for (j, observable) in enumerate(observables)
-#             values[1, j, sample] =
-#                 real(dot(ψ, observable * ψ))
-#         end
-
-#         for i in 2:m
-#             dt = time_points[i] - time_points[i - 1]
-
-#             dps = [
-#                 real(dt * dot(ψ, Ldag * ψ))
-#                 for Ldag in LdagL
-#             ]
-
-#             dP = sum(dps)
-
-#             if rand() > dP
-#                 ψ = (I - 1im * solver.effective_hamiltonian * dt) * ψ
-#             else
-#                 probabilities = cumsum(dps) / dP
-#                 k = searchsortedfirst(probabilities, rand())
-#                 ψ = solver.lindblad_ops[k] * ψ
-#             end
-
-#             ψ ./= norm(ψ)
-
-#             for (j, observable) in enumerate(observables)
-#                 values[i, j, sample] =
-#                     real(dot(ψ, observable * ψ))
-#             end
-#         end
-#     end
-
-#     mean_values = dropdims(mean(values, dims=3), dims=3)
-
-#     std_values = if num_samples == 1
-#         zeros(Float64, m, length(observables))
-#     else
-#         dropdims(std(values, dims=3), dims=3)
-#     end
-
-#     return mean_values, std_values
-# end
 
 function _stochastic_evolution(
     solver::TrajectorySystem,
@@ -121,6 +59,7 @@ function _stochastic_evolution(
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{ComplexF64, Int64}},
     num_samples::Int,
+    rng::AbstractRNG,
 )
     m = length(time_points)
     nobs = length(observables)
@@ -171,7 +110,7 @@ function _stochastic_evolution(
                 dP += dp
             end
 
-            if rand() > dP
+            if rand(rng) > dP
                 # ψ ← (I - i Heff dt) ψ
                 #
                 # Compute Heff * ψ into preallocated storage.
@@ -186,7 +125,7 @@ function _stochastic_evolution(
                     1im * dt * tmp
             else
                 # Select a jump without cumsum(dps) / dP.
-                threshold = rand() * dP
+                threshold = rand(rng) * dP
                 cumulative = 0.0
                 selected = lastindex(dps)
 
@@ -250,7 +189,9 @@ function evolve(
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{Float64, Int64}};
     num_samples::Int=1,
+    rng::AbstractRNG=Random.default_rng(),
 )
+
     isempty(time_points) &&
         throw(ArgumentError("time_points must not be empty"))
 
@@ -279,6 +220,7 @@ function evolve(
         time_points,
         obs,
         num_samples,
+        rng,
     )
 end
 
