@@ -1,6 +1,9 @@
 using SparseArrays
 using LinearAlgebra
 
+const LindbladSystem =
+    OpenSpinDynamics.LindbladSolver.LindbladSystem
+
 @testset "Lindblad evolution" begin
 
     @testset "Static system" begin

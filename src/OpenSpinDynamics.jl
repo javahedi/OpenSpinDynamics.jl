@@ -24,14 +24,11 @@ using .SpinModels:
     update_model!
 
 include("lindblad.jl")
-using .LindbladSolver:
-    LindbladSystem
 
 include("krylov.jl")
 
 include("trajectories.jl")
-using .TrajectorySolver:
-    TrajectorySystem
+
 
 include("evolution.jl")
     
@@ -48,8 +45,6 @@ export
     polarized_state,
     SpinModel,
     update_model!,
-    LindbladSystem,
-    TrajectorySystem,
     evolve
 
 end
