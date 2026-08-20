@@ -1,4 +1,4 @@
-module StochasticWavefunctionSolver
+module TrajectorySolver
 
 using LinearAlgebra
 using SparseArrays
@@ -7,25 +7,25 @@ using Statistics
 import ..evolve
 using ..SpinModels: SpinModel
 
-export StochasticWavefunctionSystem
+export TrajectorySystem
 
-struct StochasticWavefunctionSystem
+struct TrajectorySystem
     hamiltonian::SparseMatrixCSC{ComplexF64, Int64}
     lindblad_ops::Vector{SparseMatrixCSC{ComplexF64, Int64}}
     effective_hamiltonian::SparseMatrixCSC{ComplexF64, Int64}
 end
 
-function StochasticWavefunctionSystem(
+function TrajectorySystem(
     model::SpinModel,
     lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}},
 )
-    return StochasticWavefunctionSystem(
+    return TrajectorySystem(
         model.hamiltonian,
         lindblad_ops,
     )
 end
 
-function StochasticWavefunctionSystem(
+function TrajectorySystem(
     hamiltonian::SparseMatrixCSC{Float64, Int64},
     lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}},
 )
@@ -43,15 +43,16 @@ function StochasticWavefunctionSystem(
     Ls = [complex.(L) for L in lindblad_ops]
 
     Heff = copy(H)
+
     for L in Ls
         Heff -= (1im / 2) * (L' * L)
     end
 
-    return StochasticWavefunctionSystem(H, Ls, Heff)
+    return TrajectorySystem(H, Ls, Heff)
 end
 
 function _stochastic_evolution(
-    solver::StochasticWavefunctionSystem,
+    solver::TrajectorySystem,
     ψ0::Vector{ComplexF64},
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{ComplexF64, Int64}},
@@ -115,7 +116,7 @@ function _stochastic_evolution(
 end
 
 function evolve(
-    solver::StochasticWavefunctionSystem,
+    solver::TrajectorySystem,
     ψ0::SparseVector{Float64, Int64},
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{Float64, Int64}};

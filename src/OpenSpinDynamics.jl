@@ -31,8 +31,8 @@ include("krylov.jl")
 
 
 include("trajectories.jl")
-using .StochasticWavefunctionSolver:
-    StochasticWavefunctionSystem
+using .TrajectorySolver:
+    TrajectorySystem
     
 
 
@@ -48,7 +48,7 @@ export
     SpinModel,
     update_model!,
     LindbladSystem,
-    StochasticWavefunctionSystem,
+    TrajectorySystem,
     evolve
 
 end
