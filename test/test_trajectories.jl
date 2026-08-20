@@ -1,6 +1,8 @@
 using SparseArrays
 using Random
-
+const TrajectorySystem =
+    OpenSpinDynamics.TrajectorySolver.TrajectorySystem
+    
 @testset "Stochastic trajectories" begin
 
     @testset "Static system" begin
