@@ -5,6 +5,19 @@ using LinearAlgebra
 
 export SpinOperators, spin_operators
 
+
+"""
+    SpinOperators
+
+Collection of single-site spin operators for an `N`-spin Hilbert space.
+
+The fields contain sparse operators acting on the full Hilbert space:
+
+- `x[i]`: Pauli ``σ_x`` operator acting on site `i`.
+- `z[i]`: Pauli ``σ_z`` operator acting on site `i`.
+- `plus[i]`: raising operator ``σ_+`` acting on site `i`.
+- `minus[i]`: lowering operator ``σ_-`` acting on site `i`.
+"""
 struct SpinOperators
     x::Vector{SparseMatrixCSC{Float64, Int}}
     z::Vector{SparseMatrixCSC{Float64, Int}}
@@ -12,6 +25,29 @@ struct SpinOperators
     minus::Vector{SparseMatrixCSC{Float64, Int}}
 end
 
+
+"""
+    spin_operators(N::Int)
+
+Construct single-site spin operators for an `N`-spin system.
+
+Returns a [`SpinOperators`](@ref) object containing the
+``σ_x``, ``σ_z``, ``σ_+``, and ``σ_-`` operators for every site,
+represented as sparse matrices on the full ``2^N``-dimensional Hilbert space.
+
+# Arguments
+
+- `N`: Number of spins. Must be positive.
+
+# Example
+
+```julia
+ops = spin_operators(4)
+
+ops.z[1]
+ops.plus[2]
+```
+"""
 function spin_operators(N::Int)
     N > 0 || throw(ArgumentError("N must be positive"))
 
@@ -38,7 +74,12 @@ function spin_operators(N::Int)
         push!(minus, kron(kron(I_left, σminus), I_right))
     end
 
-    return SpinOperators(x, z, plus, minus)
+    return SpinOperators(
+        x,
+        z,
+        plus,
+        minus,
+    )
 end
 
 end # module Operators

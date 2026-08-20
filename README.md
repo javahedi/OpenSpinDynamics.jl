@@ -1,117 +1,212 @@
 # OpenSpinDynamics.jl
 
-[![CI Pipeline](https://github.com/javahedi/OpenSpinDynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/javahedi/OpenSpinDynamics/actions/workflows/ci.yml)
+[![Build Status](https://github.com/javahedi/OpenSpinDynamics.jl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/javahedi/OpenSpinDynamics.jl/actions/workflows/ci.yml?query=branch%3Amain)
+[![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://javahedi.github.io/OpenSpinDynamics.jl/dev/)
 
-![SpinDynamics Logo](assets/logo.png)
+<p align="center">
+  <img src="docs/src/assets/trajectories_vs_lindblad.png"
+       alt="Quantum trajectories compared with Lindblad dynamics"
+       width="720">
+</p>
 
-OpenSpinDynamics.jl is a Julia-based library designed for simulating the dynamics of open quantum spin systems. The library provides robust tools for solving Lindblad master equations, stochastic wavefunctions, and analyzing spin models with a variety of solvers. 
+**OpenSpinDynamics.jl** is a Julia package for simulating closed and open quantum spin dynamics.
 
-This project leverages the power of Julia's ecosystem for high-performance numerical computing and is optimized for parallel execution.
+It provides sparse spin-model construction, Krylov and Arnoldi real-time evolution, Lindblad master-equation dynamics, and stochastic quantum trajectories through a compact high-level API.
+
+> **Status:** OpenSpinDynamics.jl is under active development. The API is usable but may evolve as the package develops.
 
 ## Features
 
-- **Comprehensive Spin Dynamics Tools**: 
-  - Simulation of quantum spin systems.
-  - Lindblad master equation solver.
-  - Stochastic wavefunction solver.
+- Spin-1/2 model construction with sparse Hamiltonians
+- Krylov and Arnoldi real-time evolution
+- Lindblad master-equation dynamics
+- Stochastic quantum trajectories
+- Nearest-neighbor couplings
+- Clean power-law long-range couplings
+- Disordered long-range couplings
+- Néel and polarized product states
+- Sparse single-site spin operators
+- Unified `evolve` interface based on `SpinModel`
 
-- **Powerful Solvers**: 
-  - Krylov Arnoldi solver for efficient computation.
-  - Utilities for handling coupling, disorder, and Pauli operators.
+## Installation
 
-- **Parallel Computing Support**: 
-  - Distributed and parallel processing using Julia's `Distributed` and `pmap`.
-  - GPU acceleration for Monte Carlo sampling in `StochasticWavefunctionSolver.jl`.
+OpenSpinDynamics.jl supports Julia versions compatible with the package's `Project.toml`.
 
-- **Customization and Flexibility**: 
-  - Modular design to adapt to various research needs.
-  - Easily configurable setup and test structure.
+Until registration in the Julia General registry, install directly from GitHub:
 
-## Repository Structure
-
-```
-OpenSpinDynamics
-    ├── Manifest.toml
-    ├── Project.toml
-    ├── README.md
-    ├── examples
-    │   ├── configuration.json
-    │   ├── main.jl
-    │   └── plot.jl
-    ├── src
-    │   ├── Arnoldi.jl
-    │   ├── Coupling.jl
-    │   ├── Disorder.jl
-    │   ├── KrylovArnoldiSolver.jl
-    │   ├── LindbladSolver.jl
-    │   ├── OpenSpinDynamics.jl
-    │   ├── PauliOps.jl
-    │   ├── QuantumState.jl
-    │   ├── Solvers.jl
-    │   ├── SpinModels.jl
-    │   ├── StochasticWavefunctionSolver.jl
-    │   ├── setup.jl
-    │   └── utils.jl
-    └── test
-        ├── configuration_test.json
-        └── runtests.jl
-```
-
-## Quick Start
-
-### Prerequisites
-
-Ensure that you have Julia installed on your system. The recommended version is Julia 1.11 or higher.
-
-### Installation
-
-Clone the repository:
-```bash
-git clone https://github.com/javahedi/OpenSpinDynamics.git
-cd OpenSpinDynamics
-```
-
-Activate the project environment in Julia:
 ```julia
-julia --project=.
 using Pkg
-Pkg.instantiate()
+Pkg.add(url="https://github.com/javahedi/OpenSpinDynamics.jl")
 ```
 
-This will install all required dependencies listed in the `Project.toml` file.
+## Quick start
 
-### Running Simulations
+Construct a nearest-neighbor XXZ model and evolve a Néel state:
 
-Run the main simulation script with 4 threads:
-```bash
-julia --project=. -t 4 examples/main.jl   
-```
-
-### Generating Plots
-
-Generate visualization of the simulation results:
-```bash
-julia --project=. examples/plot.jl   
-```
-
-## Contribution Guidelines
-
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Submit a pull request with a clear description of your changes.
-
-Please ensure all changes pass the tests before submitting:
 ```julia
-julia --project=. test/runtests.jl
+using OpenSpinDynamics
+
+N = 4
+
+coupling = NearestNeighborCoupling(0.0, N)
+
+model = SpinModel(
+    N;
+    Jxy=1.0,
+    Jz=1.0,
+    coupling=coupling,
+)
+
+ψ0 = neel_state(N)
+
+ops = spin_operators(N)
+
+times = collect(range(0.0, 2.0; length=51))
+
+result = evolve(
+    model,
+    ψ0,
+    times,
+    [ops.z[1]];
+    method=:krylov,
+)
 ```
+
+Arnoldi evolution uses the same interface:
+
+```julia
+result = evolve(
+    model,
+    ψ0,
+    times,
+    [ops.z[1]];
+    method=:arnoldi,
+)
+```
+
+## Open-system dynamics
+
+Open-system evolution uses the same `SpinModel` together with Lindblad collapse operators.
+
+For local spontaneous emission,
+
+```math
+L_i = \sqrt{\gamma}\,\sigma_i^-.
+```
+
+construct the collapse operators with:
+
+```julia
+γ = 0.2
+
+lindblad_ops = [
+    sqrt(γ) * ops.minus[i]
+    for i in 1:N
+]
+```
+
+### Lindblad master equation
+
+For density-matrix evolution:
+
+```julia
+ρ0 = sparse(ψ0 * ψ0')
+
+result = evolve(
+    model,
+    ρ0,
+    times,
+    [ops.z[1]];
+    method=:expm,
+    lindblad_ops=lindblad_ops,
+)
+```
+
+The Lindblad interface supports `method=:expm` and `method=:ode`.
+
+### Quantum trajectories
+
+The same dissipative model can be simulated using stochastic quantum trajectories:
+
+```julia
+mean_values, std_values = evolve(
+    model,
+    ψ0,
+    times,
+    [ops.z[1]];
+    method=:trajectories,
+    lindblad_ops=lindblad_ops,
+    num_samples=500,
+)
+```
+
+This returns the trajectory-averaged observables together with their sample standard deviations.
+
+## Documentation
+
+Full documentation, tutorials, worked examples, and the API reference are available at:
+
+- [Documentation](https://javahedi.github.io/OpenSpinDynamics.jl/dev/)
+
+The documentation includes examples of:
+
+- closed XXZ dynamics
+- amplitude damping
+- dissipative XXZ dynamics
+- stochastic trajectories compared with Lindblad evolution
+
+## Examples
+
+The maintained examples are part of the documentation:
+
+- [`Closed XXZ dynamics`](docs/src/examples/closed_xxz.md)
+- [`Amplitude damping`](docs/src/examples/amplitude_damping.md)
+- [`Dissipative XXZ dynamics`](docs/src/examples/dissipative_xxz.md)
+- [`Trajectories vs Lindblad`](docs/src/examples/trajectories_vs_lindblad.md)
+
+These examples are built with Documenter.jl and include executable code and plots.
+
+## Public API
+
+| Task | Function / type |
+| --- | --- |
+| Spin-model construction | `SpinModel` |
+| Update an existing model | `update_model!` |
+| Nearest-neighbor coupling | `NearestNeighborCoupling` |
+| Clean long-range coupling | `LongRangeCouplingClean` |
+| Disordered long-range coupling | `LongRangeCouplingDisorder` |
+| Néel product state | `neel_state` |
+| Polarized product state | `polarized_state` |
+| Spin operators | `spin_operators`, `SpinOperators` |
+| Closed-system evolution | `evolve(...; method=:krylov)` |
+| Arnoldi evolution | `evolve(...; method=:arnoldi)` |
+| Lindblad evolution | `evolve(...; method=:expm)` / `:ode` |
+| Quantum trajectories | `evolve(...; method=:trajectories)` |
+
+The low-level solver implementation remains internal so that the public API stays focused on physical models, states, observables, and evolution.
+
+## Testing
+
+Run the complete test suite with:
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+The test suite is also run through GitHub Actions.
+
+Build the documentation locally with:
+
+```bash
+julia --project=docs docs/make.jl
+```
+
+## Contributing
+
+Contributions, bug reports, and suggestions are welcome through GitHub issues and pull requests.
+
+Please run the test suite before submitting changes.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-Special thanks to the contributors and the Julia community for their support and inspiration.
-
-
+OpenSpinDynamics.jl is distributed under the terms of the repository's [`LICENSE`](LICENSE) file.
