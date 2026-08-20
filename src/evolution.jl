@@ -1,4 +1,5 @@
 using SparseArrays
+using Random
 
 """
     evolve(model, ψ0, time_points, observables; kwargs...)
@@ -19,9 +20,9 @@ function evolve(
     method::Symbol=:krylov,
     lindblad_ops=nothing,
     num_samples::Int=1,
+    rng::AbstractRNG=Random.default_rng(),
 )
     if method in (:krylov, :arnoldi)
-
         lindblad_ops === nothing ||
             throw(ArgumentError(
                 "lindblad_ops is only used with method=:trajectories",
@@ -45,7 +46,6 @@ function evolve(
         )
 
     elseif method === :trajectories
-
         lindblad_ops === nothing &&
             throw(ArgumentError(
                 "lindblad_ops is required for method=:trajectories",
@@ -62,6 +62,7 @@ function evolve(
             time_points,
             observables;
             num_samples=num_samples,
+            rng=rng,
         )
 
     else

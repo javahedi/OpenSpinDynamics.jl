@@ -3,6 +3,7 @@ module TrajectorySolver
 using LinearAlgebra
 using SparseArrays
 using Statistics
+using Random
 
 import ..evolve
 using ..SpinModels: SpinModel
@@ -51,69 +52,136 @@ function TrajectorySystem(
     return TrajectorySystem(H, Ls, Heff)
 end
 
+
 function _stochastic_evolution(
     solver::TrajectorySystem,
     ψ0::Vector{ComplexF64},
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{ComplexF64, Int64}},
     num_samples::Int,
+    rng::AbstractRNG,
 )
     m = length(time_points)
+    nobs = length(observables)
+    njumps = length(solver.lindblad_ops)
 
-    LdagL = [L' * L for L in solver.lindblad_ops]
+    # Construct L†L once per evolve call.
+    LdagL = [
+        L' * L
+        for L in solver.lindblad_ops
+    ]
 
     values = zeros(
         Float64,
         m,
-        length(observables),
+        nobs,
         num_samples,
     )
 
-    for sample in 1:num_samples
-        ψ = copy(ψ0)
+    # Reusable working storage.
+    ψ = copy(ψ0)
+    tmp = similar(ψ0)
+    dps = zeros(Float64, njumps)
 
+    for sample in 1:num_samples
+        copyto!(ψ, ψ0)
+
+        # Initial observables.
         for (j, observable) in enumerate(observables)
+            mul!(tmp, observable, ψ)
             values[1, j, sample] =
-                real(dot(ψ, observable * ψ))
+                real(dot(ψ, tmp))
         end
 
         for i in 2:m
             dt = time_points[i] - time_points[i - 1]
 
-            dps = [
-                real(dt * dot(ψ, Ldag * ψ))
-                for Ldag in LdagL
-            ]
+            # Jump probabilities without allocating temporary vectors.
+            dP = 0.0
 
-            dP = sum(dps)
+            for k in eachindex(LdagL)
+                mul!(tmp, LdagL[k], ψ)
 
-            if rand() > dP
-                ψ = (I - 1im * solver.effective_hamiltonian * dt) * ψ
+                dp = real(
+                    dt * dot(ψ, tmp)
+                )
+
+                dps[k] = dp
+                dP += dp
+            end
+
+            if rand(rng) > dP
+                # ψ ← (I - i Heff dt) ψ
+                #
+                # Compute Heff * ψ into preallocated storage.
+                mul!(
+                    tmp,
+                    solver.effective_hamiltonian,
+                    ψ,
+                )
+
+                @. ψ =
+                    ψ -
+                    1im * dt * tmp
             else
-                probabilities = cumsum(dps) / dP
-                k = searchsortedfirst(probabilities, rand())
-                ψ = solver.lindblad_ops[k] * ψ
+                # Select a jump without cumsum(dps) / dP.
+                threshold = rand(rng) * dP
+                cumulative = 0.0
+                selected = lastindex(dps)
+
+                for k in eachindex(dps)
+                    cumulative += dps[k]
+
+                    if threshold <= cumulative
+                        selected = k
+                        break
+                    end
+                end
+
+                # Apply jump into reusable storage.
+                mul!(
+                    tmp,
+                    solver.lindblad_ops[selected],
+                    ψ,
+                )
+
+                copyto!(ψ, tmp)
             end
 
             ψ ./= norm(ψ)
 
+            # Observables without observable * ψ allocations.
             for (j, observable) in enumerate(observables)
+                mul!(tmp, observable, ψ)
+
                 values[i, j, sample] =
-                    real(dot(ψ, observable * ψ))
+                    real(dot(ψ, tmp))
             end
         end
     end
 
-    mean_values = dropdims(mean(values, dims=3), dims=3)
+    mean_values =
+        dropdims(
+            mean(values, dims=3),
+            dims=3,
+        )
 
     std_values = if num_samples == 1
-        zeros(Float64, m, length(observables))
+        zeros(
+            Float64,
+            m,
+            nobs,
+        )
     else
-        dropdims(std(values, dims=3), dims=3)
+        dropdims(
+            std(values, dims=3),
+            dims=3,
+        )
     end
 
     return mean_values, std_values
 end
+
 
 function evolve(
     solver::TrajectorySystem,
@@ -121,7 +189,9 @@ function evolve(
     time_points::Vector{Float64},
     observables::Vector{SparseMatrixCSC{Float64, Int64}};
     num_samples::Int=1,
+    rng::AbstractRNG=Random.default_rng(),
 )
+
     isempty(time_points) &&
         throw(ArgumentError("time_points must not be empty"))
 
@@ -150,6 +220,7 @@ function evolve(
         time_points,
         obs,
         num_samples,
+        rng,
     )
 end
 

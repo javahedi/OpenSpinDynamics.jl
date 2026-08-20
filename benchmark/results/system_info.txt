@@ -1,0 +1,13 @@
+OpenSpinDynamics.jl benchmark environment
+=========================================
+
+Timestamp:      2026-08-20T14:13:55.349
+Git commit:     c7751ffe04e3211814ebbaed9ec722ff61d91f39
+Git branch:     benchmark/performance
+Julia version:  1.12.6
+Julia threads:  2
+OS:             Darwin
+Architecture:   aarch64
+Word size:      64
+CPU threads:    4
+CPU model:      Apple M1

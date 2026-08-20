@@ -201,11 +201,42 @@ Build the documentation locally with:
 julia --project=docs docs/make.jl
 ```
 
-## Contributing
+## Performance
 
-Contributions, bug reports, and suggestions are welcome through GitHub issues and pull requests.
+Representative benchmarks were run on an Apple M1 with Julia 1.12.6.
 
-Please run the test suite before submitting changes.
+<p align="center">
+  <img src="docs/src/assets/benchmarks/closed_runtime.png"
+       alt="Closed-system runtime scaling"
+       width="680">
+</p>
+
+Krylov is currently the preferred closed-system backend, while stochastic trajectories show near-linear scaling with trajectory count.
+
+<p align="center">
+  <img src="docs/src/assets/benchmarks/trajectory_samples.png"
+       alt="Trajectory runtime versus sample count"
+       width="680">
+</p>
+
+For `N=8` and 100 trajectories, allocation-focused optimization reduced runtime from about **56.8 ms to 14.6 ms**, allocated memory from **274 MiB to about 1 MiB**, and allocations from roughly **234k to 683**.
+
+See the documentation for benchmark methodology and environment details.
+
+
+## Performance & collaboration
+
+Current development focuses on scalable open-system simulation, reduced allocations, reproducible stochastic trajectories, and efficient sparse propagation.
+
+Contributions are especially welcome in:
+
+- threaded and distributed trajectory sampling
+- GPU acceleration
+- matrix-free Lindblad methods
+- steady-state solvers
+- additional dissipative models
+- reproducible cross-package benchmarks
+
 
 ## License
 

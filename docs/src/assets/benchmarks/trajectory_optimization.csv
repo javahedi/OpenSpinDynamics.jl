@@ -1,0 +1,4 @@
+metric,before,after
+Runtime (ms),56.813,14.626
+Allocated memory (MiB),274.442,0.995
+Allocations,234145.0,683.0
