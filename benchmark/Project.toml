@@ -1,0 +1,6 @@
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+OpenSpinDynamics = "8d81ec37-2354-4fb2-99c0-03ca6f2bbd39"
+
+[compat]
+BenchmarkTools = "1"
