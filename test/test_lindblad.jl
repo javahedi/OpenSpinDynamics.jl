@@ -296,4 +296,8 @@ using LinearAlgebra
         @test system.hamiltonian == model.hamiltonian
         @test length(system.lindblad_ops) == 1
     end
+
+
+
+    
 end

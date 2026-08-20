@@ -85,21 +85,5 @@ module KrylovArnoldiSolver
 
 
 
-    function evolve(
-        model::SpinModel,
-        ψ0::SparseVector{Float64, Int64},
-        time_points::Vector{Float64},
-        observables::Vector{SparseMatrixCSC{Float64, Int64}};
-        method::Symbol=:krylov,
-    )
-        solver = KrylovArnoldiSystem(model.hamiltonian)
-
-        return evolve(
-            solver,
-            ψ0,
-            time_points,
-            observables;
-            method=method,
-        )
-    end
+   
 end  # End of KrylovArnoldiSolver module
