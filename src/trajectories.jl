@@ -5,13 +5,24 @@ using SparseArrays
 using Statistics
 
 import ..evolve
+using ..SpinModels: SpinModel
 
-export StochasticWavefunctionSystem, evolve_swf
+export StochasticWavefunctionSystem
 
 struct StochasticWavefunctionSystem
     hamiltonian::SparseMatrixCSC{ComplexF64, Int64}
     lindblad_ops::Vector{SparseMatrixCSC{ComplexF64, Int64}}
     effective_hamiltonian::SparseMatrixCSC{ComplexF64, Int64}
+end
+
+function StochasticWavefunctionSystem(
+    model::SpinModel,
+    lindblad_ops::Vector{SparseMatrixCSC{Float64, Int64}},
+)
+    return StochasticWavefunctionSystem(
+        model.hamiltonian,
+        lindblad_ops,
+    )
 end
 
 function StochasticWavefunctionSystem(
@@ -141,23 +152,5 @@ function evolve(
     )
 end
 
-# Temporary compatibility wrapper.
-function evolve_swf(
-    solver,
-    ψ0,
-    time_points,
-    observables,
-    num_samples;
-    kwargs...,
-)
-    return evolve(
-        solver,
-        ψ0,
-        time_points,
-        observables;
-        num_samples=num_samples,
-        kwargs...,
-    )
-end
 
 end

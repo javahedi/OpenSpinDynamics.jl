@@ -2,12 +2,10 @@ module Coupling
 
     using Random
 
-    export AbstractCoupling,
-        LongRangeCouplingDisorder,
+    export LongRangeCouplingDisorder,
         LongRangeCouplingClean,
-        NearestNeighborCoupling,
-        get_matrix,
-        get_N
+        NearestNeighborCoupling
+        
 
     abstract type AbstractCoupling end
 
@@ -117,40 +115,6 @@ module Coupling
     end
 
 
-    # Helper function to reorder indices
-    # function reorder_indices(r_index, i_index=[])
-    #     if isempty(i_index)
-    #         i_index = 1:length(r_index)
-    #     end
-
-    #     reordered_r_index = Int[]
-    #     reordered_i_index = Int[]
-
-    #     while !isempty(r_index)
-    #         min_distance = Inf
-    #         min_indices = nothing
-
-    #         for i in eachindex(r_index)
-    #             for j in eachindex(r_index)[i+1:end]
-    #                 distance = abs(r_index[i] - r_index[j])
-    #                 if distance < min_distance
-    #                     min_distance = distance
-    #                     min_indices = (i, j)
-    #                 end
-    #             end
-    #         end
-
-    #         if min_indices !== nothing
-    #             i, j = min_indices
-    #             push!(reordered_r_index, r_index[i], r_index[j])
-    #             push!(reordered_i_index, i_index[i], i_index[j])
-    #             r_index = filter(x -> x ∉ (r_index[i], r_index[j]), r_index)
-    #             i_index = filter(x -> x ∉ (i_index[i], i_index[j]), i_index)
-    #         end
-    #     end
-
-    #     return (reordered_i_index, reordered_r_index)
-    # end
 
     function reorder_indices(r_index, i_index=collect(1:length(r_index)))
         r_remaining = collect(r_index)

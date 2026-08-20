@@ -1,49 +1,44 @@
-module PauliOps
+module Operators
 
 using SparseArrays
 using LinearAlgebra
 
-export generate_operators
+export SpinOperators, spin_operators
 
-
-# Define the Pauli operator structure
-struct PauliOp
-    Xop::Vector{SparseMatrixCSC{Float64, Int}}
-    Zop::Vector{SparseMatrixCSC{Float64, Int}}
-    Pop::Vector{SparseMatrixCSC{Float64, Int}}
-    Nop::Vector{SparseMatrixCSC{Float64, Int}}
+struct SpinOperators
+    x::Vector{SparseMatrixCSC{Float64, Int}}
+    z::Vector{SparseMatrixCSC{Float64, Int}}
+    plus::Vector{SparseMatrixCSC{Float64, Int}}
+    minus::Vector{SparseMatrixCSC{Float64, Int}}
 end
 
-# Function to generate Pauli operators for an N-spin system
-function generate_operators(N::Int)
-    N > 0 || throw(ArgumentError("N must be positive."))
-    # Define the single-spin Pauli matrices
-    σx = sparse([0. 1.; 1. 0.])
-    σz = sparse([1. 0.; 0. -1.])
-    σp = sparse([0. 1.; 0. 0.])
-    σn = sparse([0. 0.; 1. 0.])
+function spin_operators(N::Int)
+    N > 0 || throw(ArgumentError("N must be positive"))
 
-    # Create vectors to hold the operators for each spin position
-    Xop = Vector{SparseMatrixCSC{Float64, Int}}()
-    Zop = Vector{SparseMatrixCSC{Float64, Int}}()
-    Pop = Vector{SparseMatrixCSC{Float64, Int}}()
-    Nop = Vector{SparseMatrixCSC{Float64, Int}}()
+    σx = sparse([0.0 1.0; 1.0 0.0])
+    σz = sparse([1.0 0.0; 0.0 -1.0])
+    σplus = sparse([0.0 1.0; 0.0 0.0])
+    σminus = sparse([0.0 0.0; 1.0 0.0])
 
-    # Generate tensor products for each operator
+    x = Vector{SparseMatrixCSC{Float64, Int}}()
+    z = Vector{SparseMatrixCSC{Float64, Int}}()
+    plus = Vector{SparseMatrixCSC{Float64, Int}}()
+    minus = Vector{SparseMatrixCSC{Float64, Int}}()
+
     for i in 0:N-1
-        leftdim  = 2^i
-        rightdim = 2^(N-i-1)
-        I_left   = sparse(I, leftdim, leftdim)
-        I_right  = sparse(I, rightdim, rightdim)
+        leftdim = 2^i
+        rightdim = 2^(N - i - 1)
 
-        push!(Xop, kron(kron(I_left, σx), I_right))
-        push!(Zop, kron(kron(I_left, σz), I_right))
-        push!(Pop, kron(kron(I_left, σp), I_right))
-        push!(Nop, kron(kron(I_left, σn), I_right))
+        I_left = sparse(I, leftdim, leftdim)
+        I_right = sparse(I, rightdim, rightdim)
+
+        push!(x, kron(kron(I_left, σx), I_right))
+        push!(z, kron(kron(I_left, σz), I_right))
+        push!(plus, kron(kron(I_left, σplus), I_right))
+        push!(minus, kron(kron(I_left, σminus), I_right))
     end
 
-    # Return the PauliOp struct with all the operators
-    return PauliOp(Xop, Zop, Pop, Nop)
+    return SpinOperators(x, z, plus, minus)
 end
 
-end  # End of PauliOps module
+end # module Operators

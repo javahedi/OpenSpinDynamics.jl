@@ -1,74 +1,80 @@
 module QuantumState
 
-    using SparseArrays
+using SparseArrays
 
-    export AbstractInitialState, NeelState, PolarizedState, construct_state
+export neel_state, polarized_state
 
-    abstract type AbstractInitialState end
+function _basis_states(direction::Symbol)
+    direction in (:x, :z) ||
+        throw(ArgumentError("direction must be :x or :z"))
 
-    struct NeelState <: AbstractInitialState
-        L::Int
-        direction::String
+    up_z = sparse([1.0, 0.0])
+    dn_z = sparse([0.0, 1.0])
+
+    if direction === :z
+        return up_z, dn_z
     end
 
-    struct PolarizedState <: AbstractInitialState
-        L::Int
-        direction::String
+    factor = inv(sqrt(2.0))
+
+    up_x = factor .* (up_z + dn_z)
+    dn_x = factor .* (up_z - dn_z)
+
+    return up_x, dn_x
+end
+
+
+"""
+    neel_state(N; direction=:z)
+
+Construct a normalized Néel product state for `N` spins.
+
+The first spin points along the positive `direction`, followed by
+alternating spins. `direction` may be `:z` or `:x`.
+"""
+function neel_state(
+    N::Int;
+    direction::Symbol=:z,
+)
+    N > 0 ||
+        throw(ArgumentError("N must be positive"))
+
+    up, dn = _basis_states(direction)
+
+    ψ = up
+
+    for i in 2:N
+        ψ = kron(ψ, iseven(i) ? dn : up)
     end
 
-    function construct_state(state::NeelState)
-        # Validate direction
-        if state.direction ∉ ["z", "x"]
-            error("Invalid direction: $(state.direction). Choose 'z' or 'x'.")
-        end
+    return sparse(ψ)
+end
 
-        # Define basis states
-        up = sparse([1.0, 0.0])
-        dn = sparse([0.0, 1.0])
 
-        # Transform to x-basis if needed
-        if state.direction == "x"
-            up_z = up
-            dn_z = dn
+"""
+    polarized_state(N; direction=:z)
 
-            up = sqrt(0.5) .* (up_z + dn_z)
-            dn = sqrt(0.5) .* (up_z - dn_z)
-        end
+Construct a normalized fully polarized product state for `N` spins.
 
-        # Construct Néel state
-        s = up
-        for i in 2:state.L
-            if i % 2 == 0
-                s = kron(s, dn)
-            else
-                s = kron(s, up)
-            end
-        end
-        return sparse(s)
+`direction` may be `:z` or `:x`.
+"""
+function polarized_state(
+    N::Int;
+    direction::Symbol=:z,
+)
+    N > 0 ||
+        throw(ArgumentError("N must be positive"))
+
+    up, _ = _basis_states(direction)
+
+    ψ = up
+
+    for _ in 2:N
+        ψ = kron(ψ, up)
     end
 
-    function construct_state(state::PolarizedState)
-        # Validate direction
-        if state.direction ∉ ["z", "x"]
-            error("Invalid direction: $(state.direction). Choose 'z' or 'x'.")
-        end
+    return sparse(ψ)
+end
 
-        # Define basis states
-        up = sparse([1.0, 0.0])
-        dn = sparse([0.0, 1.0])
+end
 
-        # Transform to x-basis if needed
-        if state.direction == "x"
-            up = sqrt(0.5) .* (up + dn)
-            dn = sqrt(0.5) .* (up - dn)
-        end
-
-        # Construct polarized state
-        s = up
-        for i in 2:state.L
-            s = kron(s, up)
-        end
-        return sparse(s)
-    end
-
-end  # End of QuantumState module

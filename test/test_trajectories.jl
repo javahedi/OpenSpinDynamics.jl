@@ -94,4 +94,24 @@ using Random
             [bad_L],
         )
     end
+
+
+
+    @testset "Construct from SpinModel" begin
+        model = SpinModel(
+            1;
+            Jxy=0.0,
+            Jz=0.0,
+        )
+
+        L = spzeros(Float64, 2, 2)
+
+        system = StochasticWavefunctionSystem(
+            model,
+            [L],
+        )
+
+        @test system.hamiltonian == complex.(model.hamiltonian)
+        @test length(system.lindblad_ops) == 1
+    end
 end

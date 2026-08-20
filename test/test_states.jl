@@ -2,7 +2,7 @@ using LinearAlgebra
 
 @testset "Quantum states" begin
     @testset "Polarized z state" begin
-        ψ = construct_state(PolarizedState(3, "z"))
+        ψ = polarized_state(3; direction=:z)
 
         expected = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -12,7 +12,7 @@ using LinearAlgebra
     end
 
     @testset "Neel z state" begin
-        ψ = construct_state(NeelState(2, "z"))
+        ψ = neel_state(2; direction=:z)
 
         # |↑↓⟩
         expected = [0.0, 1.0, 0.0, 0.0]
@@ -23,7 +23,8 @@ using LinearAlgebra
     end
 
     @testset "Polarized x state" begin
-        ψ = construct_state(PolarizedState(2, "x"))
+        ψ = polarized_state(2; direction=:x)
+
 
         # |+x,+x⟩
         expected = fill(0.5, 4)
@@ -33,7 +34,7 @@ using LinearAlgebra
     end
 
     @testset "Neel x state" begin
-        ψ = construct_state(NeelState(2, "x"))
+        ψ = neel_state(2; direction=:x)
 
         # |+x,-x⟩
         expected = 0.5 .* [1.0, -1.0, 1.0, -1.0]
@@ -43,7 +44,8 @@ using LinearAlgebra
     end
 
     @testset "Invalid direction" begin
-        @test_throws ErrorException construct_state(NeelState(2, "y"))
-        @test_throws ErrorException construct_state(PolarizedState(2, "y"))
+        @test_throws ArgumentError neel_state(2; direction=:y)
+        @test_throws ArgumentError polarized_state(2; direction=:y)
     end
 end
+

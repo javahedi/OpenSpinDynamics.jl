@@ -2,7 +2,6 @@ using SparseArrays
 
 @testset "Krylov evolution" begin
     @testset "Zero Hamiltonian" begin
-        H = spzeros(Float64, 2, 2)
         ψ0 = sparsevec([1], [1.0], 2)
 
         Z = sparse([
@@ -11,10 +10,17 @@ using SparseArrays
         ])
 
         times = [0.0, 0.1, 0.5, 1.0]
-        system = KrylovArnoldiSystem(H)
+
+        model = SpinModel(
+            1;
+            Jxy=0.0,
+            Jz=0.0,
+            hx=[0.0],
+            hz=[0.0],
+        )
 
         result = evolve(
-            system,
+            model,
             ψ0,
             times,
             [Z];
@@ -23,35 +29,30 @@ using SparseArrays
 
         @test size(result) == (length(times), 1)
         @test result[:, 1] ≈ ones(length(times))
-
-
-       
     end
 
     @testset "Invalid method" begin
-        H = spzeros(Float64, 2, 2)
         ψ0 = sparsevec([1], [1.0], 2)
         Z = sparse([1.0 0.0; 0.0 -1.0])
 
-        system = KrylovArnoldiSystem(H)
+        model = SpinModel(
+            1;
+            Jxy=0.0,
+            Jz=0.0,
+        )
 
         @test_throws ArgumentError evolve(
-            system,
+            model,
             ψ0,
             [0.0, 0.1],
             [Z];
             method=:invalid,
         )
-
-
-
-
     end
 end
 
 
 @testset "Arnoldi evolution" begin
-    H = spzeros(Float64, 2, 2)
     ψ0 = sparsevec([1], [1.0], 2)
 
     Z = sparse([
@@ -60,10 +61,17 @@ end
     ])
 
     times = [0.0, 0.1, 0.5, 1.0]
-    system = KrylovArnoldiSystem(H)
+
+    model = SpinModel(
+        1;
+        Jxy=0.0,
+        Jz=0.0,
+        hx=[0.0],
+        hz=[0.0],
+    )
 
     result = evolve(
-        system,
+        model,
         ψ0,
         times,
         [Z];
@@ -76,11 +84,6 @@ end
 
 
 @testset "Arnoldi agrees with Krylov" begin
-    H = sparse([
-        0.0 1.0
-        1.0 0.0
-    ])
-
     ψ0 = sparsevec([1], [1.0], 2)
 
     Z = sparse([
@@ -89,10 +92,19 @@ end
     ])
 
     times = [0.0, 0.1, 0.25, 0.5, 1.0]
-    system = KrylovArnoldiSystem(H)
+
+    # For N = 1 and hx = 1:
+    # H = σx
+    model = SpinModel(
+        1;
+        Jxy=0.0,
+        Jz=0.0,
+        hx=[1.0],
+        hz=[0.0],
+    )
 
     result_krylov = evolve(
-        system,
+        model,
         ψ0,
         times,
         [Z];
@@ -100,7 +112,7 @@ end
     )
 
     result_arnoldi = evolve(
-        system,
+        model,
         ψ0,
         times,
         [Z];
@@ -108,7 +120,6 @@ end
     )
 
     @test size(result_krylov) == size(result_arnoldi)
-
     @test result_arnoldi ≈ result_krylov atol=1e-10
 
     expected = cos.(2 .* times)
