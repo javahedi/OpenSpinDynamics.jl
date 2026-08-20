@@ -1,0 +1,9 @@
+N,method,time_ms,memory_MiB,allocations
+4,krylov,0.097,0.304,1319
+4,arnoldi,1.792,14.682,6366
+6,krylov,0.627,1.49,1999
+6,arnoldi,3.017,23.894,14468
+8,krylov,5.419,4.967,2703
+8,arnoldi,10.141,58.319,22473
+10,krylov,17.226,13.391,2763
+10,arnoldi,44.24,204.102,28301
